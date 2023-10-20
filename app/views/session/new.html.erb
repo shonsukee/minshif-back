@@ -1,0 +1,21 @@
+<div class="login-page">
+	<div class="login-container">
+		<%= form_with model: @user, url: login_path, local: true do |f| %>
+			<div class="login-form">
+				<div class="login-title">
+					<h1>アカウントにログイン</h1>
+				</div>
+				<div class="field">
+					<%= f.text_field :email, placeholder:'メールアドレス', class: "form-email" %>
+				</div>
+				<div class="field">
+					<%= f.password_field :password, placeholder:'パスワード', class: "form-password" %>
+				</div>
+				<div class="actions">
+					<%= f.submit "ログイン", class: "btn btn-primary login-page-button center" %>
+					<%= link_to 'まだアカウントをお持ちでない方はこちら', sign_up_path, class: 'link center' %>
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>
