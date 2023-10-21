@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  group_name: MyString
+  open_time: 2023-10-21 08:21:41
+  close_time: 2023-10-21 08:21:41
+
+two:
+  group_name: MyString
+  open_time: 2023-10-21 08:21:41
+  close_time: 2023-10-21 08:21:41
