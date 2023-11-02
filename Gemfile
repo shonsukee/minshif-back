@@ -75,3 +75,7 @@ group :test do
   gem "factory_bot_rails"
   gem 'faker'
 end
+
+gem "shakapacker", "= 7.1"
+
+gem "react-rails", "= 3.1.1"
