@@ -1,4 +1,10 @@
-class UsersController < ApplicationController
+class Api::V1::SignUpController < ApplicationController
+
+	def index
+		users = User.all
+		render json: users
+	end
+
 	def new
 		@user = User.new
 	end
