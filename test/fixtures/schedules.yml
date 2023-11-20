@@ -1,13 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user_id: 1
-  sl_id: 1
-  group_id: 1
-  work_date: 2023-10-21
+  membership_id: 1
+  title: MyString
+  description: MyText
+  work_date: 2023-11-14
+  work_start: 2023-11-14 14:25:50
+  work_end: 2023-11-14 14:25:50
 
 two:
-  user_id: 1
-  sl_id: 1
-  group_id: 1
-  work_date: 2023-10-21
+  membership_id: 1
+  title: MyString
+  description: MyText
+  work_date: 2023-11-14
+  work_start: 2023-11-14 14:25:50
+  work_end: 2023-11-14 14:25:50
