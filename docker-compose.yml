@@ -14,15 +14,15 @@ services:
     env_file:
       - .env
     
-  web:
-    container_name: rails_web
+  api:
+    container_name: rails_api
     image: minshif
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle install && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/minshif
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - db
 
