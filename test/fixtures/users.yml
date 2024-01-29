@@ -3,21 +3,15 @@
 one:
   user_name: MyString
   email: MyString
-  password_digest: MyString
   privilege: MyString
-  remember_me_token: MyString
-  remember_me_token_expired_at: 2023-11-14 14:14:58
-  reset_password_token: MyString
-  reset_password_token_expired_at: 2023-11-14 14:14:58
+  access_token: MyString
+  refresh_token: MyString
   deleted_at: 2023-11-14 14:14:58
 
 two:
   user_name: MyString
   email: MyString
-  password_digest: MyString
   privilege: MyString
-  remember_me_token: MyString
-  remember_me_token_expired_at: 2023-11-14 14:14:58
-  reset_password_token: MyString
-  reset_password_token_expired_at: 2023-11-14 14:14:58
+  access_token: MyString
+  refresh_token: MyString
   deleted_at: 2023-11-14 14:14:58
