@@ -1,2 +1,0 @@
-class ScheduleList < ApplicationRecord
-end
