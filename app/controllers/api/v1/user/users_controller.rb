@@ -6,15 +6,18 @@ class Api::V1::User::UsersController < ApplicationController
 			render json: { error: token_params[:error] }, status: :internal_server_error
 			return
 		end
+		@token = Token.new(
+			refresh_token: token_params[:refresh_token],
+			access_token: token_params[:access_token],
+		)
 
 		# Googleアカウント情報取得
-		user_params = get_user_info(token_params[:access_token])
+		user_params = get_user_info(@token.access_token)
 		if user_params[:error].present?
 			render json: { error: user_params[:error] }, status: :internal_server_error
 			return
 		elsif User.find_by(email: user_params[:email]).present?
-			@user = User.find_by(email: user_params[:email])
-			render json: { message: "User is created." }
+			render json: { message: "User has already been created." }
 			return
 		end
 
@@ -22,14 +25,18 @@ class Api::V1::User::UsersController < ApplicationController
 		@user = User.new(
 			user_name: user_params[:name],
 			email: user_params[:email],
-			privilege: 1,
-			access_token: token_params[:access_token],
-			refresh_token: token_params[:refresh_token]
+			picture: user_params[:picture],
+			privilege: 1
 		)
-		if @user.save
+
+		begin
+			ActiveRecord::Base.transaction do
+				@user.save!
+				@user.create_token(@token.refresh_token, @token.access_token)
+			end
 			render json: { res: 'User create successflly.' }
-		else
-			render json: { res: @user.errors.full_mesages }
+		rescue ActiveRecord::RecordInvalid => e
+			render json: { error: e.message }
 		end
 	end
 
@@ -43,9 +50,9 @@ class Api::V1::User::UsersController < ApplicationController
 			if res.code == 200
 				name = res.parsed_response['name']
 				email = res.parsed_response['email']
-				# picture = res.parsed_response['picture_url']
+				picture = res.parsed_response['picture']
 
-				{ name: name, email: email }
+				{ name: name, email: email, picture: picture }
 			else
 				{ error: 'API request failed', status: res.code }
 			end
@@ -57,8 +64,14 @@ class Api::V1::User::UsersController < ApplicationController
 	def update
 		user = User.find_by(email: update_params[:email])
 		if user
+			refresh_token = user.tokens.refresh_token_for_user(user.id)
+			if refresh_token.blank?
+				render json: { error: 'refresh token is empty' }
+				return
+			end
+
 			# access_tokenを更新
-			token_params = AuthController.new(refresh_token: user.refresh_token).get_token
+			token_params = AuthController.new(refresh_token: refresh_token).get_token
 			if token_params[:error].present?
 				render json: { error: token_params[:error]}, status: :internal_server_error
 				return

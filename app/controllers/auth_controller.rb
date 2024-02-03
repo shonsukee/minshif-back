@@ -14,15 +14,15 @@ class AuthController < ApplicationController
 			body['code']= code
 			body['grant_type'] = 'authorization_code'
 		elsif token.present?
-			body['refresh_token']= token
+			body['refresh_token']= token.is_a?(Array) ? token.first : token
 			body['grant_type'] = 'refresh_token'
 		else
-			return { error: 'Invalid parameters' }
+			return { error: 'No valid parameters' }
 		end
 		add_body = {
 			client_id: ENV['GOOGLE_CLIENT_ID'],
 			client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-			redirect_uri: 'http://localhost:3000/',
+			redirect_uri: 'http://localhost:8000/api/v1/user/create',
 			access_type: 'offline'
 		}
 		body = body.merge(add_body)
