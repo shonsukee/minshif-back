@@ -1,6 +1,10 @@
 class User < ApplicationRecord
 	has_many :tokens, dependent: :destroy
 
+	encrypts :user_name, deterministic: true, downcase: true
+	encrypts :email, deterministic: true, downcase: true
+	encrypts :picture
+
 	validates :user_name, presence: true, length: {maximum: 200}
 	validates :email, presence: true, uniqueness: true
 
