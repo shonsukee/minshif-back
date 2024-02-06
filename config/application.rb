@@ -23,5 +23,9 @@ module Minshif
 	config.action_view.field_error_proc = proc do |html_tag, _|
 		html_tag.html_safe
 	end
+
+	config.active_record.encryption.primary_key = ENV['PRIMARY_KEY']
+    config.active_record.encryption.deterministic_key = ENV['DETERMINISTIC_KEY']
+    config.active_record.encryption.key_derivation_salt = ENV['KEY_DERIVATION_SALT']
   end
 end

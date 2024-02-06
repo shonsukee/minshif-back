@@ -15,3 +15,6 @@ ja:
         content: 内容
       comment:
         content: 内容
+    errors:
+      messages:
+        record_invalid: "バリデーションエラーが発生しました: %{errors}"

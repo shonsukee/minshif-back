@@ -10,20 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_29_050553) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_01_073750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "event_lists", comment: "予定のテンプレートリスト情報", force: :cascade do |t|
     t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.string "title", comment: "予定のタイトル"
+    t.string "title", null: false, comment: "予定のタイトル"
     t.text "description", comment: "予定の詳細"
     t.time "work_start", null: false, comment: "開始時間"
     t.time "work_end", null: false, comment: "終了時間"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at", comment: "削除日時"
     t.index ["user_id"], name: "index_event_lists_on_user_id"
   end
 
@@ -42,24 +41,32 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_050553) do
     t.boolean "current_group", default: false, comment: "現在のグループ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at", comment: "削除日時"
     t.index ["group_id"], name: "index_memberships_on_group_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "tokens", force: :cascade do |t|
+    t.uuid "user_id", comment: "ユーザIDの外部キー"
+    t.text "access_token", comment: "Google Calendar用アクセストークン"
+    t.text "refresh_token", comment: "Google Calendar用リフレッシュトークン"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_tokens_on_user_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, comment: "ユーザ情報", force: :cascade do |t|
     t.string "user_name", null: false, comment: "ユーザ名"
     t.string "email", null: false, comment: "メールアドレス"
+    t.string "picture", null: false, comment: "ユーザ写真URL"
     t.integer "privilege", null: false, comment: "権限"
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "access_token", comment: "Google Calendar用アクセストークン"
-    t.text "refresh_token", comment: "Google Calendar用リフレッシュトークン"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "event_lists", "users"
   add_foreign_key "memberships", "groups"
   add_foreign_key "memberships", "users"
+  add_foreign_key "tokens", "users"
 end

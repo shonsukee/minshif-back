@@ -1,51 +1,46 @@
 class AuthController < ApplicationController
-	def get_token
-		code = params[:code]
-		if code.present?
-			data = {
-				code: code,
-				client_id: ENV['GOOGLE_CLIENT_ID'],
-				client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-				redirect_uri: 'http://localhost:8000/get_token', # TODO: リダイレクト先をカレンダーのページに変更！
-				grant_type: 'authorization_code',
-				access_type: 'offline'
-			}
-
-			headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
-			url = 'https://www.googleapis.com/oauth2/v4/token'
-			res = HTTParty.post(url, body: data, headers: headers)
-
-			# TODO: refresh_tokenを取得し、データベースに保存する
-			refresh_token = res.parsed_response['refresh_token']
-			access_token = res.parsed_response['access_token']
-		end
-		render json: { refresh_token: refresh_token, access_token: access_token }
+	def initialize(params)
+		@params = params
 	end
 
-	# 将来的にはcodeかrefresh_tokenかでトークン取得をハンドリング
-	def get_access_token
-		refresh_token = params[:refresh_token]
-		data = {
-			refresh_token: refresh_token,
+	def get_token
+		url = 'https://www.googleapis.com/oauth2/v4/token'
+		body = {}
+		code = @params[:code] if @params.key?(:code)
+		token = @params[:refresh_token] if @params.key?(:refresh_token)
+		if code.present? && token.present?
+			return { error: 'Invalid parameters' }
+		elsif code.present?
+			body['code']= code
+			body['grant_type'] = 'authorization_code'
+		elsif token.present?
+			body['refresh_token']= token.is_a?(Array) ? token.first : token
+			body['grant_type'] = 'refresh_token'
+		else
+			return { error: 'No valid parameters' }
+		end
+		add_body = {
 			client_id: ENV['GOOGLE_CLIENT_ID'],
 			client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-			redirect_uri: 'http://localhost:8000/get_token',
-			grant_type: 'refresh_token',
+			redirect_uri: 'http://localhost:8000/api/v1/user/create',
 			access_type: 'offline'
 		}
-
-		url = 'https://www.googleapis.com/oauth2/v4/token'
+		body = body.merge(add_body)
 		headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
-		res = HTTParty.post(url, body: data, headers: headers)
 
-		# TODO: access_tokenを取得し、データベースに保存する
-		access_token = res.parsed_response['access_token']
-		if access_token.present?
-		#   current_user.access_token = access_token
-		#   current_user.save
-			render json: { res: access_token }
-		else
-			render plain: ''
+		# Googleのトークン取得
+		begin
+			res = HTTParty.post(url, body: body, headers: headers)
+			if res.code == 200
+				refresh_token = res.parsed_response['refresh_token']
+				access_token = res.parsed_response['access_token']
+
+				{ refresh_token: refresh_token, access_token: access_token }
+			else
+				{ error: res, status: res.code }
+			end
+		rescue StandardError => e
+			{ error: e.message, status: :internal_server_error}
 		end
 	end
 
