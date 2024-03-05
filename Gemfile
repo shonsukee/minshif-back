@@ -9,8 +9,8 @@ gem "rails", "~> 7.0.8"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
-# Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
+# Use mysql as the database for Active Record
+gem "mysql2", "~> 0.5.6"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
@@ -79,9 +79,11 @@ group :test do
   gem 'faker'
 end
 
-gem "shakapacker", "= 7.1"
-gem "react-rails", "= 3.1.1"
-
+# HTTP通信
 gem "httparty"
+
+# 環境変数
 gem 'dotenv-rails'
+
+# Google Resource
 gem "google-apis-calendar_v3"

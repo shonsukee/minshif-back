@@ -10,51 +10,91 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_01_073750) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "pgcrypto"
-  enable_extension "plpgsql"
-
-  create_table "event_lists", comment: "予定のテンプレートリスト情報", force: :cascade do |t|
-    t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.string "title", null: false, comment: "予定のタイトル"
-    t.text "description", comment: "予定の詳細"
-    t.time "work_start", null: false, comment: "開始時間"
-    t.time "work_end", null: false, comment: "終了時間"
+ActiveRecord::Schema[7.0].define(version: 2024_03_04_060828) do
+  create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.integer "day_of_week", null: false, comment: "曜日"
+    t.time "open_time", null: false, comment: "開店時間"
+    t.time "close_time", null: false, comment: "閉店時間"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_event_lists_on_user_id"
+    t.index ["store_id"], name: "index_business_hours_on_store_id"
   end
 
-  create_table "groups", id: :uuid, default: -> { "gen_random_uuid()" }, comment: "グループ情報", force: :cascade do |t|
-    t.string "group_name", null: false, comment: "グループ名"
-    t.time "open_time", null: false, comment: "営業開始時間"
-    t.time "close_time", null: false, comment: "営業終了時間"
+  create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "所属情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.boolean "current_store", default: false, comment: "現在のグループ"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id"], name: "index_memberships_on_store_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "shift_change_requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフト変更依頼情報", force: :cascade do |t|
+    t.bigint "shift_id", comment: "シフト情報の外部キー"
+    t.string "requestor", null: false, comment: "依頼者ID"
+    t.string "consenter", comment: "承諾者ID"
+    t.string "status", null: false, comment: "状態"
+    t.datetime "response_date", comment: "返信日時"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shift_id"], name: "index_shift_change_requests_on_shift_id"
+  end
+
+  create_table "shifts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフト情報", force: :cascade do |t|
+    t.bigint "membership_id", comment: "所属情報の外部キー"
+    t.date "shift_date", null: false, comment: "希望日"
+    t.time "start_time", null: false, comment: "開始時間"
+    t.time "end_time", null: false, comment: "終了時間"
+    t.text "notes", comment: "備考"
+    t.boolean "is_registered", default: false, comment: "登録状態"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_shifts_on_membership_id"
+  end
+
+  create_table "special_business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "特別営業日情報", force: :cascade do |t|
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.date "special_date", null: false, comment: "特別営業日"
+    t.time "open_time", null: false, comment: "開店時間"
+    t.time "close_time", null: false, comment: "閉店時間"
+    t.string "notes", comment: "備考"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id"], name: "index_special_business_hours_on_store_id"
+  end
+
+  create_table "stores", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "店舗情報", force: :cascade do |t|
+    t.string "manager_id", null: false, comment: "管理者ID"
+    t.string "calendar_id", comment: "Google Calendar ID"
+    t.string "store_name", null: false, comment: "店舗名"
+    t.string "location", comment: "場所"
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "memberships", comment: "所属情報", force: :cascade do |t|
-    t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.uuid "group_id", comment: "グループIDの外部キー"
-    t.boolean "current_group", default: false, comment: "現在のグループ"
+  create_table "templates", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフトのテンプレート情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.time "start_time", null: false, comment: "開始時間"
+    t.time "end_time", null: false, comment: "終了時間"
+    t.text "notes", comment: "備考"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["group_id"], name: "index_memberships_on_group_id"
-    t.index ["user_id"], name: "index_memberships_on_user_id"
+    t.index ["user_id"], name: "index_templates_on_user_id"
   end
 
-  create_table "tokens", force: :cascade do |t|
-    t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.text "access_token", comment: "Google Calendar用アクセストークン"
-    t.text "refresh_token", comment: "Google Calendar用リフレッシュトークン"
+  create_table "tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "トークン情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.text "access_token", comment: "アクセストークン"
+    t.text "refresh_token", comment: "リフレッシュトークン"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_tokens_on_user_id"
   end
 
-  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, comment: "ユーザ情報", force: :cascade do |t|
+  create_table "users", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザ情報", force: :cascade do |t|
     t.string "user_name", null: false, comment: "ユーザ名"
     t.string "email", null: false, comment: "メールアドレス"
     t.string "picture", null: false, comment: "ユーザ写真URL"
@@ -65,8 +105,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_01_073750) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  add_foreign_key "event_lists", "users"
-  add_foreign_key "memberships", "groups"
+  add_foreign_key "business_hours", "stores"
+  add_foreign_key "memberships", "stores"
   add_foreign_key "memberships", "users"
+  add_foreign_key "shift_change_requests", "shifts"
+  add_foreign_key "shifts", "memberships"
+  add_foreign_key "special_business_hours", "stores"
+  add_foreign_key "templates", "users"
   add_foreign_key "tokens", "users"
 end

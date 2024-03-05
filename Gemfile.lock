@@ -70,10 +70,6 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     autoprefixer-rails (10.4.15.0)
       execjs (~> 2)
-    babel-source (5.8.35)
-    babel-transpiler (0.7.0)
-      babel-source (>= 4.0, < 6)
-      execjs (~> 2.0)
     bcrypt (3.1.19)
     bindex (0.8.1)
     bootsnap (1.16.0)
@@ -100,7 +96,6 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.2.2)
-    connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.3)
     debug (1.8.0)
@@ -184,6 +179,7 @@ GEM
     msgpack (1.7.2)
     multi_json (1.15.0)
     multi_xml (0.6.0)
+    mysql2 (0.5.6)
     net-http (0.4.1)
       uri
     net-imap (0.4.1)
@@ -199,7 +195,6 @@ GEM
     nokogiri (1.15.4-aarch64-linux)
       racc (~> 1.4)
     os (1.1.4)
-    pg (1.5.4)
     popper_js (1.16.1)
     psych (5.1.1.1)
       stringio
@@ -210,8 +205,6 @@ GEM
     rack (2.2.8)
     rack-cors (2.0.1)
       rack (>= 2.0.0)
-    rack-proxy (0.7.7)
-      rack
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (7.0.8)
@@ -245,12 +238,6 @@ GEM
     rake (13.0.6)
     rdoc (6.5.0)
       psych (>= 4.0.0)
-    react-rails (3.1.1)
-      babel-transpiler (>= 0.7.0)
-      connection_pool
-      execjs
-      railties (>= 3.2)
-      tilt
     regexp_parser (2.8.2)
     reline (0.3.9)
       io-console (~> 0.5)
@@ -290,12 +277,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    semantic_range (3.0.0)
-    shakapacker (7.1.0)
-      activesupport (>= 5.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 5.2)
-      semantic_range (>= 2.3.0)
     signet (0.18.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
@@ -355,15 +336,13 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jquery-rails (~> 4.6.0)
-  pg (~> 1.1)
+  mysql2 (~> 0.5.6)
   puma (~> 5.0)
   rack-cors
   rails (~> 7.0.8)
-  react-rails (= 3.1.1)
   rspec-rails
   sassc-rails (~> 2.1.2)
   selenium-webdriver
-  shakapacker (= 7.1)
   sprockets-rails
   stimulus-rails
   turbo-rails
