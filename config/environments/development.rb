@@ -70,4 +70,7 @@ Rails.application.configure do
 
   # ファイルが更新されたら自動で再読み込みする
   config.file_watcher = ActiveSupport::FileUpdateChecker
+
+  config.web_console.allowed_ips = '172.22.0.1'
+
 end

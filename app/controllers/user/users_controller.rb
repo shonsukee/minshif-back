@@ -1,7 +1,9 @@
-class Api::V1::User::UsersController < ApplicationController
+class User::UsersController < ApplicationController
 	def create
 		# GoogleAccessToken取得
-		token_params = AuthController.new(input_params).get_token
+		token_service = TokenService.new(input_params)
+		token_params = token_service.get_token
+
 		if token_params[:error].present?
 			render json: { error: token_params[:error] }, status: :internal_server_error
 			return
@@ -61,36 +63,9 @@ class Api::V1::User::UsersController < ApplicationController
 		end
 	end
 
-	def update
-		user = User.find_by(email: update_params[:email])
-		if user
-			refresh_token = user.tokens.refresh_token_for_user(user.id)
-			if refresh_token.blank?
-				render json: { error: 'refresh token is empty' }
-				return
-			end
-
-			# access_tokenを更新
-			token_params = AuthController.new(refresh_token: refresh_token).get_token
-			if token_params[:error].present?
-				render json: { error: token_params[:error]}, status: :internal_server_error
-				return
-			end
-			user.update_access_token(token_params[:access_token])
-
-			render json: { message: 'Access token updated successflly.' }
-		else
-			render json: { error: 'User not found.' }
-		end
-	end
-
 	private
 
 	def input_params
 		params.permit(:code, :scope, :authuser, :prompt)
-	end
-
-	def update_params
-		params.permit(:email, :refresh_token)
 	end
 end
