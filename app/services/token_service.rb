@@ -61,15 +61,13 @@ class TokenService
 		if user
 			refresh_token = user.tokens.refresh_token_for_user(user.id)
 			if refresh_token.blank?
-				{ error: 'refresh token is empty' }
-				return
+				return { error: 'refresh token is empty' }
 			end
 
 			# access_tokenを更新
 			token_params = AuthController.new(refresh_token: refresh_token).get_token
 			if token_params[:error].present?
-				{ error: token_params[:error]}, status: :internal_server_error
-				return
+				return { error: token_params[:error], status: :internal_server_error }
 			end
 			user.update_access_token(token_params[:access_token])
 
