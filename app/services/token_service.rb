@@ -1,6 +1,6 @@
-class AuthController < ApplicationController
+class TokenService
 	def initialize(params)
-		@params = params
+	  @params = params
 	end
 
 	def get_token
@@ -22,7 +22,7 @@ class AuthController < ApplicationController
 		add_body = {
 			client_id: ENV['GOOGLE_CLIENT_ID'],
 			client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-			redirect_uri: 'http://localhost:8000/api/v1/user/create',
+			redirect_uri: 'http://localhost:8000/user/create',
 			access_type: 'offline'
 		}
 		body = body.merge(add_body)
@@ -50,27 +50,36 @@ class AuthController < ApplicationController
 		res = HTTParty.get(url, query: { 'access_token' => access_token })
 
 		if res.parsed_response['error_description'].nil?
-			render json: { res: "valid token!" }
+			true
 		else
-			render json: { res: "invalid token!" }
+			false
 		end
 	end
 
-	# TODO: 引数から取得したイベント登録
-	def fetch_events
-		access_token = params[:access_token]
-		res = HTTParty.get("https://www.googleapis.com/calendar/v3/calendars/primary/events", 
-			headers: {
-				"Authorization"	=> "Bearer #{access_token}",
-				"Content-Type"	=> "application/json"
-			},
-			query: {
-				'timeMin'	=> '2024-01-01T00:00:00Z',
-				'timeMax'	=> '2024-01-31T23:59:59Z'
-			})
-		response = JSON.parse(res.body)
+	def update_token
+		user = User.find_by(email: update_params[:email])
+		if user
+			refresh_token = user.tokens.refresh_token_for_user(user.id)
+			if refresh_token.blank?
+				return { error: 'refresh token is empty' }
+			end
 
-		schedule_list = response['items'].map { |e| e['summary'] }
-		render json: { schedule_list: schedule_list }
+			# access_tokenを更新
+			token_params = AuthController.new(refresh_token: refresh_token).get_token
+			if token_params[:error].present?
+				return { error: token_params[:error], status: :internal_server_error }
+			end
+			user.update_access_token(token_params[:access_token])
+
+			true
+		else
+			{ error: 'User not found.' }
+		end
+	end
+
+	private
+
+	def update_params
+		params.permit(:email, :refresh_token)
 	end
 end

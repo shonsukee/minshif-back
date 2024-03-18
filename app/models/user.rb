@@ -1,8 +1,7 @@
 class User < ApplicationRecord
-	has_many :tokens, dependent: :destroy
+	include IdGenerator
 
-	encrypts :user_name, deterministic: true
-	encrypts :email, deterministic: true
+	has_many :tokens, dependent: :destroy
 
 	validates :user_name, presence: true, length: {maximum: 200}
 	validates :email, presence: true, uniqueness: true

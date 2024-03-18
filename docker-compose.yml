@@ -1,5 +1,12 @@
 version: '3'
 
+networks:
+  my_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+
 services:
   db:
     image: mysql:8.0
@@ -15,6 +22,8 @@ services:
       - mysql_volumes:/var/lib/mysql
     env_file:
       - .env
+    networks:
+      my_network:
 
   api:
     container_name: rails_api
@@ -27,6 +36,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    networks:
+      my_network:
 
 volumes:
   mysql_volumes:
