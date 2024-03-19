@@ -8,7 +8,7 @@ class Google::CalendarsController < ApplicationController
 		access_token = params[:access_token]
 
 		if !access_token
-			render json: { error: "access_tokenがありません" }
+			render json: { error: 'access_tokenがありません' }
 			return
 		end
 
@@ -27,5 +27,21 @@ class Google::CalendarsController < ApplicationController
 		rescue Google::Apis::Error => e
 			render json: { error: e.message }, status: internal_server_error
 		end
+	end
+
+	def fetch_shift_info
+		access_token = params[:access_token]
+		calendar_id = params[:calendar_id]
+		res = HTTParty.get("https://www.googleapis.com/calendar/v3/calendars/#{calendar_id}/events",
+			headers: {
+				'Authorization'	=> "Bearer #{access_token}",
+				'Content-Type'	=> 'application/json'
+			},
+			query: {
+				'timeMin'	=> '2024-03-01T00:00:00+09:00',
+				'timeMax'	=> '2024-03-31T23:59:59+09:00'
+			})
+		response = JSON.parse(res.body)
+		render json: { response: response }
 	end
 end

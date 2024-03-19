@@ -13,5 +13,6 @@ Rails.application.routes.draw do
 	# 開発用
 	namespace :google do
 		get '/create', to: 'calendars#create'
+		get '/fetch_info', to: 'calendars#fetch_shift_info'
 	end
 end
