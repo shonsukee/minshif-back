@@ -1,8 +1,8 @@
 class User::UsersController < ApplicationController
 	def create
 		# GoogleAccessToken取得
-		token_service = TokenService.new(input_params)
-		token_params = token_service.get_token
+		token_service = TokenService.new()
+		token_params = token_service.get_token(code: input_params[:code])
 
 		if token_params[:error].present?
 			render json: { error: token_params[:error] }, status: :internal_server_error
