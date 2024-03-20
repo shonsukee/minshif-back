@@ -24,8 +24,12 @@ module Minshif
 		html_tag.html_safe
 	end
 
+	# 暗号化処理
 	config.active_record.encryption.primary_key = ENV['PRIMARY_KEY']
     config.active_record.encryption.deterministic_key = ENV['DETERMINISTIC_KEY']
     config.active_record.encryption.key_derivation_salt = ENV['KEY_DERIVATION_SALT']
+
+	# カスタムディレクトリ
+    config.autoload_paths += %W(#{config.root}/app/services)
   end
 end
