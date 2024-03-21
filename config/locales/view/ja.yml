@@ -1,0 +1,12 @@
+ja:
+  defaults:
+    message:
+      require_login: "ログインしてください"
+  user:
+    users:
+      create:
+        already_created: "ユーザは既に作成済みです"
+  jwt:
+    invalid_token: "無効なトークンです"
+    expired_token: "トークンの有効期限が切れています"
+    unauthorized: "認証に失敗しました"

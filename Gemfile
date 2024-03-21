@@ -87,3 +87,9 @@ gem 'dotenv-rails'
 
 # Google Resource
 gem "google-apis-calendar_v3"
+
+# ユーザ管理
+gem "jwt"
+
+# localeの利用
+gem "rails-i18n"
