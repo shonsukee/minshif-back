@@ -19,11 +19,11 @@ class User::UsersController < ApplicationController
 			render json: { error: user_params[:error] }, status: :internal_server_error
 			return
 		else
-			user = User.find_by(email: user_params[:email]) if user_params[:error].present?
+			user = User.find_by(email: user_params[:email]) if user_params[:email].present?
 			# 既存ユーザの場合
 			if user.present?
 				token = Jwt::TokenProvider.call(user.id)
-				render json: { error: t('.already_created'), token: token }
+				render json: { msg: I18n.t('user.users.create.already_created'), token: token }
 				return
 			end
 		end
