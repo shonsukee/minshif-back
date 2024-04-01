@@ -29,5 +29,15 @@ module Minshif
 	config.active_record.encryption.primary_key = ENV['PRIMARY_KEY']
     config.active_record.encryption.deterministic_key = ENV['DETERMINISTIC_KEY']
     config.active_record.encryption.key_derivation_salt = ENV['KEY_DERIVATION_SALT']
+
+	config.generators do |g|
+	  g.assets false
+	  g.helper     false
+	  g.test_framework :rspec,
+		fixtures: false,
+		view_specs: false,
+		helper_specs: false,
+		routing_specs: false
+	end
   end
 end
