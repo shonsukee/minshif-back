@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_04_060828) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_01_020403) do
   create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
     t.string "store_id", comment: "店舗情報の外部キー"
     t.integer "day_of_week", null: false, comment: "曜日"
@@ -27,6 +27,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_04_060828) do
     t.boolean "current_store", default: false, comment: "現在のグループ"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "calendar_id"
+    t.integer "privilege", null: false
     t.index ["store_id"], name: "index_memberships_on_store_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
@@ -66,8 +68,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_04_060828) do
   end
 
   create_table "stores", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "店舗情報", force: :cascade do |t|
-    t.string "manager_id", null: false, comment: "管理者ID"
-    t.string "calendar_id", comment: "Google Calendar ID"
     t.string "store_name", null: false, comment: "店舗名"
     t.string "location", comment: "場所"
     t.datetime "deleted_at", comment: "削除日時"
@@ -98,7 +98,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_04_060828) do
     t.string "user_name", null: false, comment: "ユーザ名"
     t.string "email", null: false, comment: "メールアドレス"
     t.string "picture", null: false, comment: "ユーザ写真URL"
-    t.integer "privilege", null: false, comment: "権限"
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
