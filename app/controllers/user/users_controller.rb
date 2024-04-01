@@ -18,9 +18,14 @@ class User::UsersController < ApplicationController
 		if user_params[:error].present?
 			render json: { error: user_params[:error] }, status: :internal_server_error
 			return
-		elsif User.find_by(email: user_params[:email]).present?
-			render json: { message: "User has already been created." }
-			return
+		else
+			user = User.find_by(email: user_params[:email]) if user_params[:email].present?
+			# 既存ユーザの場合
+			if user.present?
+				token = Jwt::TokenProvider.call(user.id)
+				render json: { msg: I18n.t('user.users.create.already_created'), token: token }
+				return
+			end
 		end
 
 		# ユーザを作成して登録
@@ -30,13 +35,14 @@ class User::UsersController < ApplicationController
 			picture: user_params[:picture],
 			privilege: 1
 		)
-
 		begin
 			ActiveRecord::Base.transaction do
 				@user.save!
 				@user.create_token(@token.refresh_token, @token.access_token)
 			end
-			render json: { res: 'User create successflly.' }
+
+			token = Jwt::TokenProvider.call(@user.id)
+			render json: { token: token }
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }
 		end
