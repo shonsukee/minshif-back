@@ -2,6 +2,8 @@ class User < ApplicationRecord
 	include IdGenerator
 
 	has_many :tokens, dependent: :destroy
+	has_many :memberships
+	has_many :templates
 
 	validates :user_name, presence: true, length: {maximum: 200}
 	validates :email, presence: true, uniqueness: true
