@@ -32,8 +32,7 @@ class User::UsersController < ApplicationController
 		@user = User.new(
 			user_name: user_params[:name],
 			email: user_params[:email],
-			picture: user_params[:picture],
-			privilege: 1
+			picture: user_params[:picture]
 		)
 		begin
 			ActiveRecord::Base.transaction do

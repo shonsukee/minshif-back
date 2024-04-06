@@ -2,10 +2,18 @@ ja:
   defaults:
     message:
       require_login: "ログインしてください"
+    errors:
+      past_date: "過去の日付は選択できません"
+      start_date_after_end_date: "開始日時は終了日時より後の日時を選択してください"
+      deadline_date_after_end_date: "締切日時は終了日時より後の日時を選択してください"
   user:
     users:
       create:
         already_created: "ユーザは既に作成済みです"
+  shift:
+    shift_submission_requests:
+      create:
+        success: "シフト提出を依頼しました"
   jwt:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
