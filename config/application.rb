@@ -20,6 +20,8 @@ module Minshif
     config.time_zone = "Tokyo"
     # config.eager_load_paths << Rails.root.join("extras")
 	config.i18n.default_locale = :ja
+	config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
+
 	config.action_view.field_error_proc = proc do |html_tag, _|
 		html_tag.html_safe
 	end
@@ -31,5 +33,14 @@ module Minshif
 
 	# カスタムディレクトリ
     config.autoload_paths += %W(#{config.root}/app/services)
+	config.generators do |g|
+	  g.assets false
+	  g.helper     false
+	  g.test_framework :rspec,
+		fixtures: false,
+		view_specs: false,
+		helper_specs: false,
+		routing_specs: false
+	end
   end
 end

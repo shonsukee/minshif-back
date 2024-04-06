@@ -16,7 +16,7 @@ class TokenService
 		add_body = {
 			client_id: ENV['GOOGLE_CLIENT_ID'],
 			client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-			redirect_uri: 'http://localhost:8000/user/create',
+			redirect_uri: 'http://localhost:3000/redirect',
 			access_type: 'offline'
 		}
 		body = body.merge(add_body)

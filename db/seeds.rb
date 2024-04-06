@@ -1,4 +1,5 @@
 ApplicationRecord.transaction do
+	ShiftSubmissionRequest.delete_all
 	Shift.delete_all
 	Membership.delete_all
 	Token.delete_all
@@ -15,7 +16,6 @@ ApplicationRecord.transaction do
 		user_name: 'shonsuke',
 		email: 'shonsuke@gmail.com',
 		picture: picture,
-		privilege: 3
 	)
 
 	refresh_token = 'abc'
@@ -27,12 +27,9 @@ ApplicationRecord.transaction do
 	)
 
 	# 管理用グループ
-	calendar_id = ''
 	location = '東京都千代田区永田町１丁目７−１'
 	store = Store.create(
 		id: '1',
-		manager_id: user.id,
-		calendar_id: calendar_id,
 		store_name: 'スーパーshonsuke',
 		location: location
 	)
@@ -41,7 +38,9 @@ ApplicationRecord.transaction do
 	membership = Membership.create(
 		user_id: user.id,
 		store_id: store.id,
-		current_store: true
+		current_store: true,
+		calendar_id: "",
+		privilege: 3
 	)
 
 	# 営業時間
