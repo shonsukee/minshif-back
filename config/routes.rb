@@ -7,5 +7,6 @@ Rails.application.routes.draw do
 
 	namespace 'shift' do
 		post '/submitShiftRequest', to: 'shift_submission_requests#create'
+		post '/submit_shift_request/wanted', to: 'shift_submission_requests#wanted'
 	end
 end

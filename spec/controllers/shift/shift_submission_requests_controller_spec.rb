@@ -7,15 +7,15 @@ describe Shift::ShiftSubmissionRequestsController, type: :controller do
 				start_date: start_date,
 				end_date: end_date,
 				deadline_date: deadline_date,
-				deadline_time: "00:00",
-				notes: "This is a test."
+				deadline_time: '00:00',
+				notes: 'This is a test.'
 			}
 		}}
 
-		context "with valid attributes" do
+		context 'with valid attributes' do
 			before do
 				shift_submission_request_mock = instance_double(
-					"ShiftSubmissionRequest",
+					'ShiftSubmissionRequest',
 					save: true
 				)
 				allow(ShiftSubmissionRequest).to receive(:new).and_return(shift_submission_request_mock)
@@ -86,6 +86,5 @@ describe Shift::ShiftSubmissionRequestsController, type: :controller do
 				end
 			end
 		end
-
 	end
 end

@@ -1,5 +1,5 @@
 class Shift::ShiftSubmissionRequestsController < ApplicationController
-	before_action :authenticate, only: [:create]
+	before_action :authenticate, only: [:create, :wanted]
 
 	def create
 		@shift_submission_request = ShiftSubmissionRequest.new(
@@ -15,6 +15,23 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 			render json: { msg: I18n.t('shift.shift_submission_requests.create.success') }, status: 200
 		else
 			render json: { error: @shift_submission_request.errors.full_messages }, status: 400
+		end
+	end
+
+	def wanted
+		# ログインユーザの所属情報を取得
+		@current_membership = @current_user.memberships.current.first
+		if !@current_membership
+			render json: { error: I18n.t('default.message.require_membership') }
+			return
+		end
+
+		# 募集中のシフト提出依頼を取得
+		res = ShiftSubmissionRequest.wanted(@current_membership.store_id)
+		if res
+			render json: { res: res }
+		else
+			render json: { error: I18n.t('shift.shift_submission_requests.wanted.not_found') }
 		end
 	end
 

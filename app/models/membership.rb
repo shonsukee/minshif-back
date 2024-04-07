@@ -3,4 +3,6 @@ class Membership < ApplicationRecord
 	belongs_to :store, class_name: 'Store', foreign_key: 'store_id'
 
 	has_many :shifts
+
+	scope :current, -> { where(current_store: true)}
 end
