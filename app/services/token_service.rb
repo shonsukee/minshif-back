@@ -1,13 +1,7 @@
 class TokenService
-	def initialize(params)
-	  @params = params
-	end
-
-	def get_token
+	def get_token(code: nil, token: nil)
 		url = 'https://www.googleapis.com/oauth2/v4/token'
 		body = {}
-		code = @params[:code] if @params.key?(:code)
-		token = @params[:refresh_token] if @params.key?(:refresh_token)
 		if code.present? && token.present?
 			return { error: 'Invalid parameters' }
 		elsif code.present?
@@ -32,6 +26,10 @@ class TokenService
 		begin
 			res = HTTParty.post(url, body: body, headers: headers)
 			if res.code == 200
+				if Rails.env.development?
+					p "---------------- access_token ------------------------"
+					p res.parsed_response['access_token']
+				end
 				refresh_token = res.parsed_response['refresh_token']
 				access_token = res.parsed_response['access_token']
 
@@ -44,8 +42,7 @@ class TokenService
 		end
 	end
 
-	def validate_access_token
-		access_token = params[:access_token]
+	def validate_access_token(access_token)
 		url = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 		res = HTTParty.get(url, query: { 'access_token' => access_token })
 
@@ -56,8 +53,8 @@ class TokenService
 		end
 	end
 
-	def update_token
-		user = User.find_by(email: update_params[:email])
+	def update_token(email)
+		user = User.find_by(email: email)
 		if user
 			refresh_token = user.tokens.refresh_token_for_user(user.id)
 			if refresh_token.blank?
@@ -65,7 +62,7 @@ class TokenService
 			end
 
 			# access_tokenを更新
-			token_params = AuthController.new(refresh_token: refresh_token).get_token
+			token_params = get_token(token: refresh_token)
 			if token_params[:error].present?
 				return { error: token_params[:error], status: :internal_server_error }
 			end
@@ -75,11 +72,5 @@ class TokenService
 		else
 			{ error: 'User not found.' }
 		end
-	end
-
-	private
-
-	def update_params
-		params.permit(:email, :refresh_token)
 	end
 end
