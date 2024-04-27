@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+	include ActionController::Cookies
 	include ActionController::RequestForgeryProtection
 
 	# 自動でCSRF対策する設定

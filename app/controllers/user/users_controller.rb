@@ -14,7 +14,7 @@ class User::UsersController < ApplicationController
 		)
 
 		# Googleアカウント情報取得
-		user_params = get_user_info(@token.access_token)
+		user_params = get_user_info_with_google(@token.access_token)
 		if user_params[:error].present?
 			render json: { error: user_params[:error] }, status: :internal_server_error
 			return
@@ -23,7 +23,7 @@ class User::UsersController < ApplicationController
 			# 既存ユーザの場合
 			if user.present?
 				token = Jwt::TokenProvider.call(user.id)
-				render json: { msg: I18n.t('user.users.create.already_created'), token: token }
+				render json: { msg: I18n.t('user.users.create.already_created'), token: token, user_id: user.id }
 				return
 			end
 		end
@@ -41,13 +41,13 @@ class User::UsersController < ApplicationController
 			end
 
 			token = Jwt::TokenProvider.call(@user.id)
-			render json: { token: token }
+			render json: { token: token, user_id: @user.id }
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }
 		end
 	end
 
-	def get_user_info(access_token)
+	def get_user_info_with_google(access_token)
 		url = 'https://www.googleapis.com/oauth2/v1/userinfo'
 		headers = {
 			Authorization: "Bearer #{access_token}"
@@ -66,6 +66,12 @@ class User::UsersController < ApplicationController
 		rescue StandardError => e
 			{ error: e.message, status: :internal_server_error }
 		end
+	end
+
+	def get_user_info
+		user_id = cookies[:user_id]
+		user = User.find_by(id: user_id) if user_id.present?
+		render json: { user: user }
 	end
 
 	private
