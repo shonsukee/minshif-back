@@ -1,6 +1,6 @@
 FactoryBot.define do
 	factory :store do
-		store_name { 'スーパーspec店' }
+		sequence(:store_name) { |n| "スーパーspec#{n}号店" }
 		location { '東京都渋谷区' }
 	end
 end

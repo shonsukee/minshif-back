@@ -2,6 +2,7 @@ ja:
   defaults:
     message:
       require_login: "ログインしてください"
+      require_membership: "所属情報が見つかりません"
     errors:
       past_date: "過去の日付は選択できません"
       start_date_after_end_date: "開始日時は終了日時より後の日時を選択してください"
@@ -14,6 +15,9 @@ ja:
     shift_submission_requests:
       create:
         success: "シフト提出を依頼しました"
+      wanted:
+        not_found: "募集中のシフト提出依頼はありません"
+
   jwt:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
