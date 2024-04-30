@@ -15,6 +15,7 @@ class User::UsersController < ApplicationController
 
 		# Googleアカウント情報取得
 		user_params = get_user_info_with_google(@token.access_token)
+		is_new_user = true
 		if user_params[:error].present?
 			render json: { error: user_params[:error] }, status: :internal_server_error
 			return
@@ -23,7 +24,9 @@ class User::UsersController < ApplicationController
 			# 既存ユーザの場合
 			if user.present?
 				token = Jwt::TokenProvider.call(user.id)
-				render json: { msg: I18n.t('user.users.create.already_created'), token: token, user_id: user.id }
+				memberships = Membership.where(user.id)
+				is_new_user = false if memberships.count > 0
+				render json: { msg: I18n.t('user.users.create.already_created'), token: token, user_id: user.id, is_new_user: is_new_user }
 				return
 			end
 		end
@@ -41,9 +44,9 @@ class User::UsersController < ApplicationController
 			end
 
 			token = Jwt::TokenProvider.call(@user.id)
-			render json: { token: token, user_id: @user.id }
+			render json: { token: token, user_id: @user.id, is_new_user: is_new_user }
 		rescue ActiveRecord::RecordInvalid => e
-			render json: { error: e.message }
+			render json: { error: e.message }, status: :internal_server_error
 		end
 	end
 
