@@ -17,7 +17,12 @@ ja:
         success: "シフト提出を依頼しました"
       wanted:
         not_found: "募集中のシフト提出依頼はありません"
-
+  store:
+    stores:
+      create:
+        success: "店舗を作成しました"
+        already_created: "指定された店舗名は既に作成されています"
+        empty: "店舗名が登録されていません"
   jwt:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
