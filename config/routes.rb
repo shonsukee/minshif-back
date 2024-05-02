@@ -13,4 +13,6 @@ Rails.application.routes.draw do
 	namespace 'store' do
 		post '/create', to: 'store#create'
 	end
+
+	post '/invitation', to: 'invitations#create'
 end

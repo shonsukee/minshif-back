@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_04_082250) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_30_095121) do
   create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
     t.string "store_id", comment: "店舗情報の外部キー"
     t.integer "day_of_week", null: false, comment: "曜日"
@@ -19,6 +19,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_04_082250) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["store_id"], name: "index_business_hours_on_store_id"
+  end
+
+  create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "招待情報", force: :cascade do |t|
+    t.bigint "membership_id", comment: "招待者の所属情報の外部キー"
+    t.string "invite_link", null: false, comment: "招待リンク"
+    t.string "invitee_email", null: false, comment: "被招待者メールアドレス"
+    t.datetime "expired_at", comment: "有効期限"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_invitations_on_membership_id"
   end
 
   create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "所属情報", force: :cascade do |t|
@@ -117,6 +127,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_04_082250) do
   end
 
   add_foreign_key "business_hours", "stores"
+  add_foreign_key "invitations", "memberships"
   add_foreign_key "memberships", "stores"
   add_foreign_key "memberships", "users"
   add_foreign_key "shift_change_requests", "shifts"

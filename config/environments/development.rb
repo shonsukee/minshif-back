@@ -73,4 +73,19 @@ Rails.application.configure do
 
   config.web_console.allowed_ips = '172.22.0.1'
 
+  # メール設定
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.smtp_settings = {
+	address:         'smtp.gmail.com',
+	port:            587,
+	domain:          'gmail.com',
+	user_name:       ENV['SMTP_USERNAME'],
+	password:        ENV['SMTP_PASSWORD'],
+	authentication:  'plain',
+	enable_starttls: true
+  }
+  config.action_mailer.preview_path = "#{Rails.root}/lib/mailer_previews"
 end
