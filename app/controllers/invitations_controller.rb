@@ -1,7 +1,7 @@
 class InvitationsController < ApplicationController
 	def create
 		if params[:invitee][:email].blank?
-			render json: { error: "メールアドレスを入力してください。" }, status: :bad_request
+			render json: { error: I18n.t('invitation.invitations.create.blank') }, status: :bad_request
 			return
 		end
 
@@ -9,40 +9,54 @@ class InvitationsController < ApplicationController
 		@manager = User.find_by(id: params[:manager][:user_id])
 		membership = Membership.find_by(user_id: @manager.id, current_store: true)
 		if membership.blank? || @manager.blank?
-			render json: { error: "管理者情報が不正です。" }, status: :bad_request
+			render json: { error: I18n.t('invitation.invitations.create.invalid_manager_info') }, status: :bad_request
 			return
 		end
 
 		ActiveRecord::Base.transaction do
 			invitee_email = params[:invitee][:email].downcase
-			@invitee_user = User.find_or_initialize_by(email: invitee_email) do |new_user|
-				new_user.user_name = "名無しの権兵衛"
-				new_user.picture = ""
-			end
+			@invitee_user = User.find_by(email: invitee_email)
 
 			# 招待しているグループに既に所属している場合
 			if @invitee_user && Membership.find_by(user_id: @invitee_user.id, store_id: membership.store_id)
-				render json: { error: "そのメールアドレスは所属済みです。" }
+				render json: { error: I18n.t('invitation.invitations.create.success') }
+			elsif @invitee_user
+				begin
+					# 既存ユーザで，招待している店舗に参加していない場合，スタッフとして店舗に追加
+					Membership.create!(
+						user_id: @invitee_user.id,
+						store_id: membership.store_id,
+						current_store: false,
+						privilege: 1
+					)
+					render json: { response: I18n.t('invitation.invitations.create.already_joined') }
+				rescue StandardError => e
+					render json: { error: e.message }
+				end
 			else
 				# マジックリンク生成
-				secure_code = SecureRandom.urlsafe_base64
-				@invite_link = "#{ENV['FRONTEND_ORIGIN']}/login?code=#{secure_code}"
+				secure_id = SecureRandom.urlsafe_base64
+				@invite_link = "#{ENV['FRONTEND_ORIGIN']}/login?invitation_id=#{secure_id}"
+				@invitee_user = User.new(
+					user_name: "guest",
+					email: invitee_email
+				)
 
 				begin
 					@invitee_user.send_invite_email(@invitee_user, @invite_link, @manager)
 					Invitation.create!(
 						membership_id: membership.id,
-						invite_link: @invite_link,
+						invitation_id: secure_id,
 						invitee_email: invitee_email,
 						expired_at: DateTime.now + 1.day
 					)
-					render json: { response: "招待メール送信完了！" }
+					render json: { response: I18n.t('invitation.invitations.create.success_invited') }
 				rescue StandardError => e
 					render json: { error: e.message }
 				end
 			end
 		rescue StandardError => e
-			render json: { error: "招待作成に失敗しました: #{e.message}" }, status: :unprocessable_entity
+			render json: { error: I18n.t('invitation.invitations.create.failed'), error_message: e.message }, status: :unprocessable_entity
 		end
 	end
 end

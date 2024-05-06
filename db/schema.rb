@@ -23,7 +23,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_30_095121) do
 
   create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "招待情報", force: :cascade do |t|
     t.bigint "membership_id", comment: "招待者の所属情報の外部キー"
-    t.string "invite_link", null: false, comment: "招待リンク"
+    t.string "invitation_id", null: false, comment: "招待ID"
     t.string "invitee_email", null: false, comment: "被招待者メールアドレス"
     t.datetime "expired_at", comment: "有効期限"
     t.datetime "created_at", null: false

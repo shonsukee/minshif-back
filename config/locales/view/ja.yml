@@ -23,6 +23,15 @@ ja:
         success: "店舗を作成しました"
         already_created: "指定された店舗名は既に作成されています"
         empty: "店舗名が登録されていません"
+  invitation:
+    invitations:
+      create:
+        success: "そのメールアドレスをスタッフリストに登録しました"
+        success_invited: "招待メールを送信しました"
+        already_joined: "そのメールアドレスは既に所属しています"
+        invalid_manager_info: "管理者情報が不正です。"
+        blank: "メールアドレスを入力してください"
+        failed: "招待メールの送信に失敗しました"
   jwt:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
