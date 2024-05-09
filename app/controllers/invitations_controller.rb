@@ -19,7 +19,7 @@ class InvitationsController < ApplicationController
 
 			# 招待しているグループに既に所属している場合
 			if @invitee_user && Membership.find_by(user_id: @invitee_user.id, store_id: membership.store_id)
-				render json: { error: I18n.t('invitation.invitations.create.success') }
+				render json: { msg: I18n.t('invitation.invitations.create.already_joined') }
 			elsif @invitee_user
 				begin
 					# 既存ユーザで，招待している店舗に参加していない場合，スタッフとして店舗に追加
@@ -29,7 +29,7 @@ class InvitationsController < ApplicationController
 						current_store: false,
 						privilege: 1
 					)
-					render json: { response: I18n.t('invitation.invitations.create.already_joined') }
+					render json: { msg: I18n.t('invitation.invitations.create.success') }
 				rescue StandardError => e
 					render json: { error: e.message }
 				end

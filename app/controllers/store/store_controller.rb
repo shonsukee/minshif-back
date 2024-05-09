@@ -15,7 +15,7 @@ class Store::StoreController < ApplicationController
 		end
 
 		begin
-			store.save
+			store.save!
 			# 店舗作成者は権限2に設定
 			membership = Membership.create!(
 				user_id: @current_user.id,

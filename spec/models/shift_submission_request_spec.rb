@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe ShiftSubmissionRequest, type: :model do
+RSpec.describe ShiftSubmissionRequest, type: :model do
 	describe 'create a new shift submission request' do
 		before do
 			@store = create(:store)

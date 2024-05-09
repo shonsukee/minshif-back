@@ -3,6 +3,6 @@ class UserMailer < ApplicationMailer
 		@invitee_user = invitee_user
 		@invite_link = invite_link
 		@manager = manager
-		mail(to: @invitee_user.email, subject: '【重要】minshif招待メール')
+		mail(to: @invitee_user.email, subject: I18n.t('user_mailer.invitation.subject'))
 	end
 end

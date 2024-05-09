@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Shift::ShiftSubmissionRequestsController, type: :controller do
+RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
 	describe 'POST #create' do
 		let(:params) {{
 			shift_submission_request: {
