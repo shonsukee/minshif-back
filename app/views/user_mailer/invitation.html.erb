@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+	</head>
+	<body>
+		<p><%= @invitee_user.user_name %> 様</p>
+		<p>
+			管理者の<%= @manager.user_name %>さんから、minshifへの参加招待が届いています。 <br />
+			早速以下のリンクからアプリにアクセスし、ご自身のアカウントを設定してください！<br />
+			<br />
+			▼アプリへの招待リンク<br />
+			<%= @invite_link %>
+		</p>
+		<p>
+			操作に不明な点があればお気軽にお問い合わせください。
+			<br />
+			<br />
+			今後とも minshif をよろしくお願いいたします。
+		</p>
+		<p>
+			-----------------------------------------------
+			<br />
+			minshif運営チーム
+			<br />
+			email: <%= I18n.t('user_mailer.email.main') %>
+			<br />
+			-----------------------------------------------
+		</p>
+	</body>
+</html>

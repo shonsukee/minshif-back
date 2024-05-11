@@ -15,9 +15,14 @@ class Store::StoreController < ApplicationController
 		end
 
 		begin
-			store.save
+			store.save!
 			# 店舗作成者は権限2に設定
-			membership = Membership.create(user: @current_user, store: store, privilege: 2)
+			membership = Membership.create!(
+				user_id: @current_user.id,
+				store_id: store.id,
+				current_store: true,
+				privilege: 2
+			)
 			render json: { response: I18n.t('store.stores.create.success') }
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }

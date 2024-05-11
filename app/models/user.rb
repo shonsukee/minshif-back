@@ -15,4 +15,12 @@ class User < ApplicationRecord
 	def update_access_token(new_access_token)
 		tokens.update(access_token: new_access_token)
 	end
+
+	def send_invite_email(invitee_user, invite_link, manager)
+		begin
+			UserMailer.invitation(invitee_user, invite_link, manager).deliver_now!
+		rescue StandardError => e
+			e.message
+		end
+	end
 end

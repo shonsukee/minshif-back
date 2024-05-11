@@ -78,6 +78,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem 'faker'
+  gem 'database_cleaner'
 end
 
 # HTTP通信

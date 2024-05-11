@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Store::StoreController, type: :controller do
+RSpec.describe Store::StoreController, type: :controller do
 	describe 'POST #create' do
-		let(:attributes) {{
+		let(:input_store_params) {{
 			store: {
 				store_name: store_name,
 				location: '木ノ葉隠れの里',
@@ -10,24 +10,21 @@ describe Store::StoreController, type: :controller do
 		}}
 
 		before(:each) do
-			allow(controller).to receive(:authenticate).and_return(true)
-			@current_user = FactoryBot.create(:user)
-			# allow(controller).to receive(:@current_user).and_return(@current_user)
-			allow_any_instance_of(Store::StoreController).to receive(:current_user).and_return(@current_user)
+			@current_user = create(:user)
+			allow(Jwt::UserAuthenticator).to receive(:call).and_return(@current_user)
 		end
 
 		context "with valid attributes" do
 			let(:store_name) { "ラーメン一楽" }
 			it "creates a new Store" do
-				expect {
-					post :create, params: attributes
+				expect{
+					post :create, params: input_store_params
 				}.to change(Store, :count).by(1)
-			end
 
-			it "renders a JSON response with the new store" do
-				post :create, params: attributes
-				expect(response).to be_successful
-				expect(response.content_type).to include('application/json')
+				expect(JSON.parse(response.body)).to eq({
+					"response"	=> I18n.t('store.stores.create.success')
+				})
+				expect(response).to have_http_status(200)
 			end
 		end
 
@@ -35,35 +32,31 @@ describe Store::StoreController, type: :controller do
 			let(:store_name) { "" }
 			it "does not create a new Store" do
 				expect {
-					post :create, params: attributes
+					post :create, params: input_store_params
 				}.to change(Store, :count).by(0)
-			end
 
-			it "renders a JSON response with errors for the new store" do
-				post :create, params: attributes
+				expect(JSON.parse(response.body)).to eq({
+					"error"	=> I18n.t('store.stores.create.empty')
+				})
 				expect(response).to have_http_status(:unprocessable_entity)
-				expect(response.content_type).to include('application/json')
-				expect(response.body).to include(I18n.t('store.stores.create.empty'))
 			end
 		end
 
 		context "when store already exists" do
 			let(:store_name) { "ラーメン一楽" }
 			before do
-				Store.create!(attributes[:store])
+				Store.create!(input_store_params[:store])
 			end
 
 			it "does not allow duplicate store names" do
 				expect {
-					post :create, params: attributes
+					post :create, params: input_store_params
 				}.to change(Store, :count).by(0)
-			end
 
-			it "returns an error message" do
-				post :create, params: attributes
+				expect(JSON.parse(response.body)).to eq({
+					"error"	=> I18n.t('store.stores.create.already_created')
+				})
 				expect(response).to have_http_status(:unprocessable_entity)
-				expect(response.content_type).to include('application/json')
-				expect(response.body).to include(I18n.t('store.stores.create.already_created'))
 			end
 		end
 	end

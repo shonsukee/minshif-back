@@ -11,6 +11,7 @@ ja:
     users:
       create:
         already_created: "ユーザは既に作成済みです"
+        success: "ユーザを作成しました"
   shift:
     shift_submission_requests:
       create:
@@ -23,7 +24,26 @@ ja:
         success: "店舗を作成しました"
         already_created: "指定された店舗名は既に作成されています"
         empty: "店舗名が登録されていません"
+  invitation:
+    invitations:
+      create:
+        success: "そのメールアドレスをスタッフリストに登録しました"
+        success_invited: "招待メールを送信しました"
+        already_joined: "そのメールアドレスは既に所属しています"
+        invalid_manager_info: "管理者情報が不正です。"
+        invalid_invitation: "招待情報が不正です。"
+        blank: "メールアドレスを入力してください"
+        failed: "招待メールの送信に失敗しました"
   jwt:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
     unauthorized: "認証に失敗しました"
+  google:
+    failed_api_request: "APIリクエストに失敗しました"
+  user_mailer:
+    invitation:
+      subject: "【重要】minshif招待メール"
+    email:
+      main: "minshif3420@gmail.com"
+      test: "minshif.test@gmail.com"
+      invitation: "minshif.invitation@gmail.com"
