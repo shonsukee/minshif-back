@@ -9,16 +9,16 @@ module Google::GoogleService
 		begin
 			response = HTTParty.get(url, headers: headers)
 			if response.code == 200
-				name = response.parsed_response['name']
+				user_name = response.parsed_response['name']
 				email = response.parsed_response['email']
 				picture = response.parsed_response['picture']
 
-				{ success?: true, name: name, email: email, picture: picture }
+				{ user_name: user_name, email: email, picture: picture }
 			else
-				{ success?: false, error: I18n.t('google.failed_api_request'), status: response.code }
+				{ error: I18n.t('google.failed_api_request'), status: response.code }
 			end
 		rescue StandardError => e
-			{ success?: false, error: e.message, status: :internal_server_error }
+			{ error: e.message, status: :internal_server_error }
 		end
 	end
 end

@@ -1,10 +1,10 @@
 class User::UsersController < ApplicationController
 	def create
-		result = UserService.create_with_token(input_params)
+		result = UserService.create_with_token(input_token_params, input_invitation_params)
 		if result[:success?]
 			render json: { msg: result[:msg], token: result[:token], user_id: result[:user_id], is_new_user: result[:is_new_user] }
 		else
-			render json: { error: result[:error] }, status: result[:status]
+			render json: { error: result[:error] }, status: :unprocessable_entity
 		end
 	end
 
@@ -16,7 +16,11 @@ class User::UsersController < ApplicationController
 
 	private
 
-	def input_params
+	def input_token_params
 		params.permit(:code)
+	end
+
+	def input_invitation_params
+		params.permit(:invitation_id)
 	end
 end

@@ -9,6 +9,8 @@ class Membership < ApplicationRecord
 
 	scope :current, -> { where(current_store: true) }
 
+	scope :with_users, ->(user_id) { where(user_id: user_id) }
+
 	def self.create_with_invitation(invitation_id, user_id)
 		begin
 			invitation = Invitation.find_by(invitation_id: invitation_id) if invitation_id.present?
