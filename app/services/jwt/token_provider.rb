@@ -2,7 +2,11 @@ module Jwt::TokenProvider
 	extend self
 
 	def call(user_id)
-		payload = { user_id: user_id, exp: (DateTime.current + 1.months).to_i }
+		payload = {
+			iss: ENV['JWT_ISS'],
+			user_id: user_id,
+			exp: (DateTime.current + 1.months).to_i
+		}
 		issue_token(payload)
 	end
 

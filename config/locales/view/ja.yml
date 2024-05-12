@@ -38,6 +38,7 @@ ja:
     invalid_token: "無効なトークンです"
     expired_token: "トークンの有効期限が切れています"
     unauthorized: "認証に失敗しました"
+    invalid_headers: "ヘッダーが不正です"
   google:
     failed_api_request: "APIリクエストに失敗しました"
   user_mailer:
