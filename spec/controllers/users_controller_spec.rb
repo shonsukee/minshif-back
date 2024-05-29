@@ -70,4 +70,25 @@ RSpec.describe User::UsersController, type: :controller do
 			end
 		end
 	end
+
+	describe 'POST#get_user_info' do
+		let(:user) { create(:user) }
+		let(:token) { Jwt::TokenProvider.call(user.id) }
+
+		before do
+			request.headers['Authorization'] = "Bearer #{token}"
+		end
+
+		it 'when the user information is correct' do
+			post :get_user_info
+
+			expect(response).to have_http_status(200)
+			expect(JSON.parse(response.body)['user']).to include({
+				'id' => user.id,
+				'user_name' => user.user_name,
+				'email' => user.email,
+				'picture' => user.picture
+			})
+		end
+	end
 end
