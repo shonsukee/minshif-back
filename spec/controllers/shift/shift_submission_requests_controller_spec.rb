@@ -11,9 +11,12 @@ RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
 				notes: 'This is a test.'
 			}
 		}}
+		let(:user) { create(:user) }
+		let(:token) { Jwt::TokenProvider.call(user_id: user.id) }
 
 		context 'with valid attributes' do
 			before do
+				request.headers['Authorization'] = "Bearer #{token}"
 				shift_submission_request_mock = instance_double(
 					'ShiftSubmissionRequest',
 					save: true
@@ -46,6 +49,10 @@ RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
 		end
 
 		context "with invalid attributes" do
+			before do
+				request.headers['Authorization'] = "Bearer #{token}"
+			end
+
 			context "when start_date is in the past" do
 				let(:start_date) { Date.new(2020, 01, 01) }
 				let(:end_date) { Date.today }

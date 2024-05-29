@@ -1,4 +1,6 @@
 class User::UsersController < ApplicationController
+	before_action :authenticate, only: [:get_user_info]
+
 	def create
 		result = UserService.create_with_token(input_token_params, input_invitation_params)
 		if result[:success?]
@@ -9,9 +11,11 @@ class User::UsersController < ApplicationController
 	end
 
 	def get_user_info
-		user_id = cookies[:user_id]
-		user = User.find_by(id: user_id) if user_id.present?
-		render json: { user: user }
+		if @current_user
+			render json: { user: @current_user }
+		else
+			render json: { error: I18n.t('user.users.get_user_info.failed') }, status: bad_request
+		end
 	end
 
 	private

@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
 
 	# 現在ログイン中のユーザ管理
 	def authenticate
-		raise AuthenticationError, t('defaults.message.require_login') unless current_user
+		raise AuthenticationError, I18n.t('defaults.message.require_login') unless current_user
 	end
 
 	private

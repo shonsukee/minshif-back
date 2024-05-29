@@ -3,6 +3,8 @@ module Jwt::UserAuthenticator
 
 	def call(request_headers)
 		@request_headers = request_headers
+		return { error: I18n.t('jwt.invalid_headers') } if token.blank?
+
 		begin
 			# decodeしたトークン(payload)とヘッダー情報(_)を格納
 			payload, = Jwt::TokenDecryptor.call(token)
