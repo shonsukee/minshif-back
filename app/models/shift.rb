@@ -1,5 +1,6 @@
 class Shift < ApplicationRecord
 	belongs_to :membership, class_name: 'Membership', foreign_key: 'membership_id'
+	belongs_to :shift_submission_request, foreign_key: 'shift_submission_request_id'
 
 	has_many :shift_change_requests
 

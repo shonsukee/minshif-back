@@ -27,11 +27,11 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 		end
 
 		# 募集中のシフト提出依頼を取得
-		res = ShiftSubmissionRequest.wanted(@current_membership.store_id)
-		if res
-			render json: { res: res }
+		data = ShiftSubmissionRequest.wanted(@current_membership.store_id)
+		if data
+			render json: { data: data, status: 200 }
 		else
-			render json: { error: I18n.t('shift.shift_submission_requests.wanted.not_found') }
+			render json: { error: I18n.t('shift.shift_submission_requests.wanted.not_found'), status: 400 }
 		end
 	end
 

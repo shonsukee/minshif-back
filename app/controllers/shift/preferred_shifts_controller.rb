@@ -6,6 +6,7 @@ class Shift::PreferredShiftsController < ApplicationController
 			validated_shifts = input_params.map do |shift_params|
 				shift = Shift.new(
 					membership_id: @current_user.memberships.current.first.id,
+					shift_submission_request_id: shift_params[:shift_submission_request_id],
 					shift_date: shift_params[:date],
 					start_time: shift_params[:startTime],
 					end_time: shift_params[:endTime],
@@ -28,7 +29,7 @@ class Shift::PreferredShiftsController < ApplicationController
 
 	def input_params
 		params.require(:preferredShifts).map do |shift|
-			shift.permit(:date, :startTime, :endTime, :notes)
+			shift.permit(:shift_submission_request_id, :date, :startTime, :endTime, :notes)
 		end
 	end
 end
