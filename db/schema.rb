@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_30_095121) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_25_073502) do
   create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
     t.string "store_id", comment: "店舗情報の外部キー"
     t.integer "day_of_week", null: false, comment: "曜日"
@@ -75,7 +75,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_30_095121) do
     t.boolean "is_registered", default: false, comment: "登録状態"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "shift_submission_request_id", comment: "シフト提出依頼の外部キー"
     t.index ["membership_id"], name: "index_shifts_on_membership_id"
+    t.index ["shift_submission_request_id"], name: "index_shifts_on_shift_submission_request_id"
   end
 
   create_table "special_business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "特別営業日情報", force: :cascade do |t|
@@ -133,6 +135,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_30_095121) do
   add_foreign_key "shift_change_requests", "shifts"
   add_foreign_key "shift_submission_requests", "stores"
   add_foreign_key "shifts", "memberships"
+  add_foreign_key "shifts", "shift_submission_requests"
   add_foreign_key "special_business_hours", "stores"
   add_foreign_key "templates", "users"
   add_foreign_key "tokens", "users"
