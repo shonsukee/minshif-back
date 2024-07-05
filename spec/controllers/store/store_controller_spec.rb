@@ -60,4 +60,41 @@ RSpec.describe Store::StoreController, type: :controller do
 			end
 		end
 	end
+
+	describe 'GET #fetch_staff_list' do
+		let(:user) { create(:user) }
+
+		before do
+			allow(Jwt::UserAuthenticator).to receive(:call).and_return(user)
+		end
+
+		context "with valid attributes" do
+			let(:store) { create(:store) }
+			let!(:membership) { create(:membership, user: user, store: store, current_store: true) }
+
+			it "return correct staff list" do
+				get :fetch_staff_list
+				expect(response).to have_http_status(:success)
+				staff_list = JSON.parse(response.body)['staff_list']
+
+				expect(staff_list).to be_an(Array)
+				expect(staff_list.first).to include(
+					'id' => membership.id,
+					'user_name' => user.user_name,
+					'privilege' => 'staff'
+				)
+			end
+		end
+
+		context "with invalid attributes" do
+			it "does not create a new Store" do
+				get :fetch_staff_list
+
+				expect(JSON.parse(response.body)).to eq({
+					"error"	=> I18n.t('store.stores.fetch_staff_list.not_found')
+				})
+				expect(response).to have_http_status(:not_found)
+			end
+		end
+	end
 end

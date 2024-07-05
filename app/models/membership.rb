@@ -5,11 +5,13 @@ class Membership < ApplicationRecord
 	has_many :shifts
 	has_many :invitations
 
-	enum :status, { stuff: 1, manager: 2, developer: 3 }
+	enum :privilege, { staff: 1, manager: 2, developer: 3 }
 
 	scope :current, -> { where(current_store: true) }
 
 	scope :with_users, ->(user_id) { where(user_id: user_id) }
+
+	scope :with_stores, ->(store_id) { where(store_id: store_id) }
 
 	def self.create_with_invitation(invitation_id, user_id)
 		begin

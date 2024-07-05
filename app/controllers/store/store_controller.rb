@@ -1,5 +1,5 @@
 class Store::StoreController < ApplicationController
-	before_action :authenticate, only: [:create]
+	before_action :authenticate, only: [:create, :fetch_staff_list]
 
 	def create
 		store = Store.new(
@@ -17,7 +17,7 @@ class Store::StoreController < ApplicationController
 		begin
 			store.save!
 			# 店舗作成者は権限2に設定
-			membership = Membership.create!(
+			Membership.create!(
 				user_id: @current_user.id,
 				store_id: store.id,
 				current_store: true,
@@ -27,6 +27,24 @@ class Store::StoreController < ApplicationController
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }
 		end
+	end
+
+	def fetch_staff_list
+		login_store = Membership.with_users(@current_user.id).current
+		if login_store.none?
+			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found') }, status: :not_found
+			return
+		end
+
+		staff_memberships = Membership.with_stores(login_store[0].store_id)
+										.select(:id, :user_id, :privilege)
+										.includes(:user)
+
+		staff_list = staff_memberships.map do |staff|
+			{ id: staff.id, privilege: staff.privilege, user_name: staff.user.user_name }
+		end
+
+		render json: { staff_list: staff_list }, status: :ok
 	end
 
 	private

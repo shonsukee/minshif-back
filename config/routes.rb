@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
 	namespace 'store' do
 		post '/create', to: 'store#create'
+		get '/staff_list', to: 'store#fetch_staff_list'
 	end
 
 	post '/invitation', to: 'invitations#create'
