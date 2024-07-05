@@ -20,6 +20,12 @@ ja:
         success: "シフト提出を依頼しました"
       wanted:
         not_found: "募集中のシフト提出依頼はありません"
+    preferred_shifts:
+      create:
+        success: "希望シフトを登録しました"
+        failure: "希望シフトの登録に失敗しました"
+        invalid_time: "時間が無効です"
+        out_of_range: "時間が範囲外です"
   store:
     stores:
       create:

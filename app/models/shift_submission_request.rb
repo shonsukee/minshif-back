@@ -1,6 +1,8 @@
 class ShiftSubmissionRequest < ApplicationRecord
 	belongs_to :store
 
+	has_many :shifts
+
 	validates :start_date, presence: true
 	validates :end_date, presence: true
 	validate :date_cannot_be_in_the_past
