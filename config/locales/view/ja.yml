@@ -15,6 +15,9 @@ ja:
       get_user_info:
         failed: "ユーザが見つかりませんでした"
   shift:
+    shifts:
+      fetch_shifts:
+        login_required: "ログインしてください"
     shift_submission_requests:
       create:
         success: "シフト提出を依頼しました"

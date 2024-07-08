@@ -87,7 +87,7 @@ RSpec.describe Store::StoreController, type: :controller do
 		end
 
 		context "with invalid attributes" do
-			it "does not create a new Store" do
+			it "had not logged in to the shop" do
 				get :fetch_staff_list
 
 				expect(JSON.parse(response.body)).to eq({

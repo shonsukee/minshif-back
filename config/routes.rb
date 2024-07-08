@@ -6,8 +6,11 @@ Rails.application.routes.draw do
 
 	namespace 'shift' do
 		post '/preferred_shifts', to: 'preferred_shifts#create'
+
 		post '/submitShiftRequest', to: 'shift_submission_requests#create'
 		get '/fetch_shift_request', to: 'shift_submission_requests#wanted'
+
+		get '/fetch_shifts', to: 'shifts#fetch_shifts'
 	end
 
 	namespace 'store' do
