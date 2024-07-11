@@ -19,8 +19,8 @@ class Shift::ShiftsController < ApplicationController
 			staff_shifts = Shift.where(shift_date: input_params['start_date']..input_params['end_date'])
 
 			staff_shifts.map do |shift|
-				# スタッフは希望シフトを閲覧できない
-				if login_store[0].privilege == "staff" && shift.is_registered == false
+				# スタッフは希望シフト情報を閲覧できない
+				if login_store[0].privilege == "staff" && !shift.is_registered || shift.membership_id != staff.id
 					next
 				end
 
@@ -33,7 +33,7 @@ class Shift::ShiftsController < ApplicationController
 					notes: shift.notes,
 					is_registered: shift.is_registered
 				}
-			end
+			end.compact
 		end
 
 		render json: { staff_shift_list: staff_shift_list }, status: :ok
