@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 		get '/fetch_shift_request', to: 'shift_submission_requests#wanted'
 
 		get '/fetch_shifts', to: 'shifts#fetch_shifts'
+
+		post '/register_draft_shifts', to: 'draft_shifts#create'
 	end
 
 	namespace 'store' do

@@ -29,6 +29,13 @@ ja:
         failure: "希望シフトの登録に失敗しました"
         invalid_time: "時間が無効です"
         out_of_range: "時間が範囲外です"
+        no_shift_request: "シフト提出依頼がありません"
+        no_membership: "所属情報がありません"
+        missing_time: "時間が指定されていません"
+    draft_shifts:
+      create:
+        success: "シフトを作成しました"
+        no_privilege: "権限がありません"
   store:
     stores:
       create:
