@@ -9,13 +9,20 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 		let(:shift_submission_request) { create(:shift_submission_request, store: store) }
 		let(:params) {{
 			preferredShifts: [
-				{shift_submission_request_id: shift_submission_request.id, date: date, startTime: startTime, endTime: endTime, notes: notes}
+				{
+					shift_submission_request_id: shift_submission_request.id,
+					date: date,
+					start_time: start_time,
+					end_time: end_time,
+					notes: notes,
+					is_registered: false
+				}
 			]
 		}}
 
 		let(:date) { Date.today }
-		let(:startTime) { Time.parse('09:00:00') }
-		let(:endTime) { Time.parse('18:00:00') }
+		let(:start_time) { Time.parse('09:00:00') }
+		let(:end_time) { Time.parse('18:00:00') }
 		let(:notes) { 'test note' }
 
 		let(:shift_request) { build(:shift_submission_request, store_id: membership.store_id, start_date: Date.yesterday, end_date: Date.tomorrow) }
@@ -46,9 +53,9 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 			context 'when dates are multiple' do
 				let(:params) {{
 					preferredShifts: [
-						{shift_submission_request_id: shift_submission_request.id, date: date, startTime: startTime, endTime: endTime, notes: notes},
-						{shift_submission_request_id: shift_submission_request.id, date: date, startTime: startTime, endTime: endTime, notes: notes},
-						{shift_submission_request_id: shift_submission_request.id, date: date, startTime: startTime, endTime: endTime, notes: notes}
+						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},
+						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},
+						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false}
 					]
 				}}
 
@@ -73,10 +80,10 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 			end
 
 			context 'when setting incorrect time' do
-				let(:startTime) { Time.parse('18:00:00') }
-				let(:endTime) { Time.parse('09:00:00') }
+				let(:start_time) { Time.parse('18:00:00') }
+				let(:end_time) { Time.parse('09:00:00') }
 
-				it 'is not valid and adds an error on startTime' do
+				it 'is not valid and adds an error on start_time' do
 					post :create, params: params
 					expect(response).to have_http_status(400)
 				end
