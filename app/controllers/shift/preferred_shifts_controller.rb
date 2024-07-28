@@ -3,25 +3,10 @@ class Shift::PreferredShiftsController < ApplicationController
 
 	def create
 		begin
-			validated_shifts = input_params.map do |shift_params|
-				shift = Shift.new(
-					membership_id: @current_user.memberships.current.first.id,
-					shift_submission_request_id: shift_params[:shift_submission_request_id],
-					shift_date: shift_params[:date],
-					start_time: shift_params[:startTime],
-					end_time: shift_params[:endTime],
-					notes: shift_params[:notes]
-				)
-
-				validator = ShiftValidator.new(shift, @current_user)
-				validator.validate
-				shift
-			end
-
-			Shift.create_preferred_shifts!(validated_shifts, @current_user)
-			render json: { msg: I18n.t('shift.preferred_shifts.create.success'), status: 200 }, status: :ok
+			Shift.register_preferred_shifts!(input_params, @current_user)
+			render json: { msg: I18n.t('shift.preferred_shifts.create.success') }, status: :ok
 		rescue ActiveRecord::RecordInvalid => e
-			render json: { error: e.record.errors.full_messages }, status: :bad_request
+			render json: { error: e.message }, status: :bad_request
 		end
 	end
 
@@ -29,7 +14,7 @@ class Shift::PreferredShiftsController < ApplicationController
 
 	def input_params
 		params.require(:preferredShifts).map do |shift|
-			shift.permit(:shift_submission_request_id, :date, :startTime, :endTime, :notes)
+			shift.permit(:shift_submission_request_id, :date, :start_time, :end_time, :notes, :is_registered)
 		end
 	end
 end

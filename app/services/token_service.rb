@@ -67,7 +67,7 @@ class TokenService
 			# access_tokenを更新
 			token_params = AuthController.new(refresh_token: refresh_token).get_token
 			if token_params[:error].present?
-				return { error: token_params[:error], status: :internal_server_error }
+				return { error: token_params[:error] }, status: :internal_server_error
 			end
 			user.update_access_token(token_params[:access_token])
 

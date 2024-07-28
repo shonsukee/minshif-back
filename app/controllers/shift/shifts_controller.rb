@@ -25,13 +25,14 @@ class Shift::ShiftsController < ApplicationController
 				end
 
 				{
-					id: staff.user.id,
+					id: shift.id,
 					user_name: staff.user.user_name,
 					date: shift.shift_date,
 					start_time: shift.start_time,
 					end_time: shift.end_time,
 					notes: shift.notes,
-					is_registered: shift.is_registered
+					is_registered: shift.is_registered,
+					shift_submission_request_id: shift.shift_submission_request_id
 				}
 			end.compact
 		end
