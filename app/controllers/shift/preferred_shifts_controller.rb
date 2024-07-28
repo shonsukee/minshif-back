@@ -4,7 +4,7 @@ class Shift::PreferredShiftsController < ApplicationController
 	def create
 		begin
 			Shift.register_preferred_shifts!(input_params, @current_user)
-			render json: { msg: I18n.t('shift.preferred_shifts.create.success'), status: :ok }
+			render json: { msg: I18n.t('shift.preferred_shifts.create.success') }, status: :ok
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }, status: :bad_request
 		end

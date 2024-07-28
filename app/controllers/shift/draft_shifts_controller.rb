@@ -9,7 +9,7 @@ class Shift::DraftShiftsController < ApplicationController
 
 		begin
 			Shift.register_draft_shifts!(input_params, @current_user)
-			render json: { message: I18n.t('shift.draft_shifts.create.success'), status: :ok }
+			render json: { message: I18n.t('shift.draft_shifts.create.success') }, status: :ok
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }, status: :bad_request
 		end
