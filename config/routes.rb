@@ -5,12 +5,19 @@ Rails.application.routes.draw do
 	end
 
 	namespace 'shift' do
+		post '/preferred_shifts', to: 'preferred_shifts#create'
+
 		post '/submitShiftRequest', to: 'shift_submission_requests#create'
-		post '/submit_shift_request/wanted', to: 'shift_submission_requests#wanted'
+		get '/fetch_shift_request', to: 'shift_submission_requests#wanted'
+
+		get '/fetch_shifts', to: 'shifts#fetch_shifts'
+
+		post '/register_draft_shifts', to: 'draft_shifts#create'
 	end
 
 	namespace 'store' do
 		post '/create', to: 'store#create'
+		get '/staff_list', to: 'store#fetch_staff_list'
 	end
 
 	post '/invitation', to: 'invitations#create'

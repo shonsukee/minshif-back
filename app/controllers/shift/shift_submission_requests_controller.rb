@@ -12,9 +12,9 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 		)
 
 		if @shift_submission_request.save
-			render json: { msg: I18n.t('shift.shift_submission_requests.create.success') }, status: 200
+			render json: { msg: I18n.t('shift.shift_submission_requests.create.success') }, status: :ok
 		else
-			render json: { error: @shift_submission_request.errors.full_messages }, status: 400
+			render json: { error: @shift_submission_request.errors.full_messages }, status: :bad_request
 		end
 	end
 
@@ -27,11 +27,11 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 		end
 
 		# 募集中のシフト提出依頼を取得
-		res = ShiftSubmissionRequest.wanted(@current_membership.store_id)
-		if res
-			render json: { res: res }
+		data = ShiftSubmissionRequest.wanted(@current_membership.store_id)
+		if data
+			render json: { data: data }, status: :ok
 		else
-			render json: { error: I18n.t('shift.shift_submission_requests.wanted.not_found') }
+			render json: { error: I18n.t('shift.shift_submission_requests.wanted.not_found') }, status: :bad_request
 		end
 	end
 

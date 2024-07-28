@@ -15,17 +15,35 @@ ja:
       get_user_info:
         failed: "ユーザが見つかりませんでした"
   shift:
+    shifts:
+      fetch_shifts:
+        login_required: "ログインしてください"
     shift_submission_requests:
       create:
         success: "シフト提出を依頼しました"
       wanted:
         not_found: "募集中のシフト提出依頼はありません"
+    preferred_shifts:
+      create:
+        success: "希望シフトを登録しました"
+        failure: "希望シフトの登録に失敗しました"
+        invalid_time: "時間が無効です"
+        out_of_range: "時間が範囲外です"
+        no_shift_request: "シフト提出依頼がありません"
+        no_membership: "所属情報がありません"
+        missing_time: "時間が指定されていません"
+    draft_shifts:
+      create:
+        success: "シフトを作成しました"
+        no_privilege: "権限がありません"
   store:
     stores:
       create:
         success: "店舗を作成しました"
         already_created: "指定された店舗名は既に作成されています"
         empty: "店舗名が登録されていません"
+      fetch_staff_list:
+        not_found: "店情報が取得できませんでした"
   invitation:
     invitations:
       create:
