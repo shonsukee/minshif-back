@@ -9,14 +9,7 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 		let(:shift_submission_request) { create(:shift_submission_request, store: store) }
 		let(:params) {{
 			preferredShifts: [
-				{
-					shift_submission_request_id: shift_submission_request.id,
-					date: date,
-					start_time: start_time,
-					end_time: end_time,
-					notes: notes,
-					is_registered: false
-				}
+				{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false}
 			]
 		}}
 
@@ -37,7 +30,7 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 			end
 
 			context 'when the date is a single' do
-				it 'is valid and adds a new preferred shift' do
+				it 'is valid and adds a new registered shift' do
 					post :create, params: params
 					expect(response).to have_http_status(200)
 				end
