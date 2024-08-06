@@ -2,9 +2,9 @@ class User::UsersController < ApplicationController
 	before_action :authenticate, only: [:get_user_info]
 
 	def create
-		result = UserService.create_with_token(input_token_params, input_invitation_params)
+		result = UserService.create_with_token(input_params)
 		if result[:success?]
-			render json: { msg: result[:msg], token: result[:token], user_id: result[:user_id], is_new_user: result[:is_new_user] }, status: :ok
+			render json: { message: result[:message], is_affiliated: result[:is_affiliated] }, status: :ok
 		else
 			render json: { error: result[:error] }, status: :unprocessable_entity
 		end
@@ -20,11 +20,7 @@ class User::UsersController < ApplicationController
 
 	private
 
-	def input_token_params
-		params.permit(:code)
-	end
-
-	def input_invitation_params
-		params.permit(:invitation_id)
+	def input_params
+		params.permit(:code, :invitation_id, user: [:id, :name, :email, :picture])
 	end
 end

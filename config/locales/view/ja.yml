@@ -10,8 +10,8 @@ ja:
   user:
     users:
       create:
-        already_created: "ユーザは既に作成済みです"
-        success: "ユーザを作成しました"
+        already_created: "お帰りなさい"
+        success: "minshifへ、ようこそ"
       get_user_info:
         failed: "ユーザが見つかりませんでした"
   shift:
