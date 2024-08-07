@@ -7,6 +7,10 @@ ja:
       past_date: "過去の日付は選択できません"
       start_date_after_end_date: "開始日時は終了日時より後の日時を選択してください"
       deadline_date_after_end_date: "締切日時は終了日時より後の日時を選択してください"
+      messages:
+        email_blank: "メールアドレスを入力してください"
+        user_not_found: "ユーザが見つかりませんでした"
+        store_not_found: "店舗が見つかりませんでした"
   user:
     users:
       create:

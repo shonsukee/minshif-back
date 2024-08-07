@@ -72,8 +72,8 @@ RSpec.describe Store::StoreController, type: :controller do
 			let(:store) { create(:store) }
 			let!(:membership) { create(:membership, user: user, store: store, current_store: true) }
 
-			it "return correct staff list" do
-				get :fetch_staff_list
+			it "returns correct staff list" do
+				get :fetch_staff_list, params: { email: user.email }
 				expect(response).to have_http_status(:success)
 				staff_list = JSON.parse(response.body)['staff_list']
 
@@ -87,8 +87,8 @@ RSpec.describe Store::StoreController, type: :controller do
 		end
 
 		context "with invalid attributes" do
-			it "had not logged in to the shop" do
-				get :fetch_staff_list
+			it "returns error when user is not logged in to the shop" do
+				get :fetch_staff_list, params: { email: user.email }
 
 				expect(JSON.parse(response.body)).to eq({
 					"error"	=> I18n.t('store.stores.fetch_staff_list.not_found')
