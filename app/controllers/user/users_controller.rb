@@ -1,6 +1,4 @@
 class User::UsersController < ApplicationController
-	before_action :authenticate, only: [:get_user_info]
-
 	def create
 		result = UserService.create_with_token(input_params)
 		if result[:success?]
@@ -11,10 +9,11 @@ class User::UsersController < ApplicationController
 	end
 
 	def get_user_info
-		if @current_user
-			render json: { user: @current_user }
+		login_user = User.find_by(email: input_user_params[:email])
+		if login_user.nil?
+			render json: { error: I18n.t('user.users.get_user_info.failed') }, status: :bad_request
 		else
-			render json: { error: I18n.t('user.users.get_user_info.failed') }, status: bad_request
+			render json: { user: login_user }
 		end
 	end
 
@@ -22,5 +21,9 @@ class User::UsersController < ApplicationController
 
 	def input_params
 		params.permit(:code, :invitation_id, user: [:id, :name, :email, :picture])
+	end
+
+	def input_user_params
+		params.permit(:email)
 	end
 end
