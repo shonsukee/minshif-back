@@ -1,6 +1,4 @@
 class Store::StoreController < ApplicationController
-	before_action :authenticate, only: [:create]
-
 	def create
 		store = Store.new(
 			store_name: input_store_params[:store_name],
@@ -14,11 +12,12 @@ class Store::StoreController < ApplicationController
 			return
 		end
 
-		begin
+		ActiveRecord::Base.transaction do
+			login_user = User.find_by(email: input_store_params[:email])
 			store.save!
 			# 店舗作成者は権限2に設定
 			Membership.create!(
-				user_id: @current_user.id,
+				user_id: login_user.id,
 				store_id: store.id,
 				current_store: true,
 				privilege: 2
@@ -61,6 +60,6 @@ class Store::StoreController < ApplicationController
 	private
 
 	def input_store_params
-		params.require(:store).permit(:store_name, :location)
+		params.permit(:store_name, :location, :email)
 	end
 end
