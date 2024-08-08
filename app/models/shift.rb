@@ -10,20 +10,22 @@ class Shift < ApplicationRecord
 	scope :with_id, ->(id) { where(id: id) }
 	scope :registered_shift_for_date, ->(membership_id, shift_date) { where(membership_id: membership_id, shift_date: shift_date, is_registered: true) }
 
-	def self.register_draft_shifts!(shifts_params, current_user)
-		register_shifts!(shifts_params, current_user, true)
+	# 本登録シフト
+	def self.register_draft_shifts!(shifts_params, login_user)
+		register_shifts!(shifts_params, login_user, true)
 	end
 
-	def self.register_preferred_shifts!(shifts_params, current_user)
-		register_shifts!(shifts_params, current_user, false)
+	# 仮登録シフト
+	def self.register_preferred_shifts!(shifts_params, login_user)
+		register_shifts!(shifts_params, login_user, false)
 	end
 
 	private
 
-	def self.register_shifts!(shifts_params, current_user, is_draft_shifts)
+	def self.register_shifts!(shifts_params, login_user, is_draft_shifts)
 		ActiveRecord::Base.transaction do
 			shifts_params.each do |shift_params|
-				membership_id = find_membership_id(shift_params, current_user, is_draft_shifts)
+				membership_id = find_membership_id(shift_params, login_user, is_draft_shifts)
 				raise ActiveRecord::RecordInvalid.new("Membership not found") if membership_id.nil?
 
 				shift = build_shift(shift_params, membership_id)
