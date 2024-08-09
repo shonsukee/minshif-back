@@ -53,14 +53,15 @@ class Shift < ApplicationRecord
 			shift = Shift.with_id(shift_params[:id]).first
 			return shift.membership_id if shift.present?
 
-			# 希望シフトがない日付からの登録時にユーザ名で検索
-			user = User.find_by(user_name: shift_params[:user_name])
-			raise ActiveRecord::RecordInvalid.new("User not found") if user.nil?
+			# 希望シフトがない日付からの登録時にemailで検索
+			shift_register_user = User.find_by(email: shift_params[:email])
+			raise ActiveRecord::RecordInvalid.new("User not found") if shift_register_user.nil?
 
-			membership = Membership.where(user_id: user.id, store_id: current_user.memberships.current.first.store_id).first
-			return membership.id if membership.present?
+			# シフトを登録する人のuser_idと管理者がログインしている店舗IDで検索
+			membership = Membership.where(user_id: shift_register_user.id, store_id: current_user.memberships.current.first.store_id)
+			return membership.first.id if membership.present?
 
-			raise ActiveRecord::RecordInvalid.new("Membership not found")
+			raise ActiveRecord::RecordNotFound, "Membership not found"
 		else
 			current_user.memberships.current.first.id
 		end

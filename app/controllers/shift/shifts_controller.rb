@@ -25,17 +25,16 @@ class Shift::ShiftsController < ApplicationController
 
 	private
 
+	# 店舗に所属するスタッフのシフト情報抽出
 	def fetch_staff_shift_list(membership, start_date, end_date)
-		Membership.with_stores(membership.store_id)
-				.select(:id, :user_id, :privilege)
-				.includes(:user)
-				.map do |staff|
+		Membership.with_stores(membership.store_id).select(:id, :user_id, :privilege).includes(:user).map do |staff|
 			Shift.where(shift_date: start_date..end_date)
 				.select { |shift| can_view_shift?(membership, staff, shift) }
 				.map { |shift| shift_data(staff, shift) }
 		end
 	end
 
+	# 管理者か登録済シフトなら取得
 	def can_view_shift?(membership, staff, shift)
 		(membership.privilege == 'manager' || shift.is_registered) && shift.membership_id == staff.id
 	end
@@ -43,7 +42,7 @@ class Shift::ShiftsController < ApplicationController
 	def shift_data(staff, shift)
 		{
 			id: shift.id,
-			user_name: staff.user.user_name,
+			email: staff.user.email,
 			date: shift.shift_date,
 			start_time: shift.start_time,
 			end_time: shift.end_time,

@@ -51,7 +51,13 @@ class Store::StoreController < ApplicationController
 										.includes(:user)
 
 		staff_list = staff_memberships.map do |staff|
-			{ id: staff.id, privilege: staff.privilege, user_name: staff.user.user_name }
+			{
+				id: staff.id,
+				privilege: staff.privilege,
+				user_name: staff.user.user_name,
+				email: staff.user.email,
+				picture: staff.user.picture
+			}
 		end
 
 		render json: { staff_list: staff_list }, status: :ok

@@ -83,6 +83,8 @@ RSpec.describe Store::StoreController, type: :controller do
 				expect(staff_list.first).to include(
 					'id' => membership.id,
 					'user_name' => user.user_name,
+					'email' => user.email,
+					'picture' => user.picture,
 					'privilege' => 'staff'
 				)
 			end

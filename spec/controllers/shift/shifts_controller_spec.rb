@@ -35,7 +35,7 @@ RSpec.describe Shift::ShiftsController, type: :controller do
 						'date' => '2024-08-15',
 						'start_time' => '2000-01-01T09:00:00.000+09:00',
 						'end_time' => '2000-01-01T18:00:00.000+09:00',
-						'user_name' => user.user_name,
+						'email' => user.email,
 						'is_registered' => false
 					)
 				end
