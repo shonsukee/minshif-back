@@ -2,23 +2,17 @@ require 'rails_helper'
 
 RSpec.describe User::UsersController, type: :controller do
 	describe "POST #create" do
-		let(:input_params) { {
-			code: '',
-			invitation_id: '',
-			user: {
-				user_name: "test",
-				email: "test@gmail.com",
-				picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYS_ocSphOFHVuKC9WgglMIvN44YC0op4uJ5rZ-qjcVhMJmwbYnudOngqiHLMTgb_kfr0"
-			}
-		} }
+		let(:input_params) { { code: 'sample_code' } }
 
 		context "when the new user create is successful" do
 			before do
 				allow(UserService).to receive(:create_with_token).and_return(
 					success?: true,
-					message: I18n.t('user.users.create.success'),
-					is_affiliated: true,
-					success?: :true
+					msg: I18n.t('user.users.create.success'),
+					token: 'sample_token',
+					user_id: '1',
+					is_new_user: true,
+					status: :created
 				)
 			end
 
@@ -26,8 +20,10 @@ RSpec.describe User::UsersController, type: :controller do
 				post :create, params: input_params
 				expect(response).to have_http_status(200)
 				expect(JSON.parse(response.body)).to eq({
-					"message"		=> I18n.t('user.users.create.success'),
-					"is_affiliated"	=> true
+					"msg"			=> I18n.t('user.users.create.success'),
+					"token"			=> "sample_token",
+					"user_id"		=> "1",
+					"is_new_user"	=> true
 				})
 			end
 		end
@@ -36,8 +32,11 @@ RSpec.describe User::UsersController, type: :controller do
 			before do
 				allow(UserService).to receive(:create_with_token).and_return(
 					success?: true,
-					message: I18n.t('user.users.create.already_created'),
-					is_affiliated: false,
+					msg: I18n.t('user.users.create.already_created'),
+					token: 'sample_token',
+					user_id: '1',
+					is_new_user: false,
+					status: :ok
 				)
 			end
 
@@ -45,8 +44,10 @@ RSpec.describe User::UsersController, type: :controller do
 				post :create, params: input_params
 				expect(response).to have_http_status(200)
 				expect(JSON.parse(response.body)).to eq({
-					"message"		=> I18n.t('user.users.create.already_created'),
-					"is_affiliated"	=> false
+					"msg"			=> I18n.t('user.users.create.already_created'),
+					"token"			=> "sample_token",
+					"user_id"		=> "1",
+					"is_new_user"	=> false
 				})
 			end
 		end
@@ -70,11 +71,16 @@ RSpec.describe User::UsersController, type: :controller do
 		end
 	end
 
-	describe 'GET#get_user_info' do
+	describe 'POST#get_user_info' do
 		let(:user) { create(:user) }
+		let(:token) { Jwt::TokenProvider.call(user.id) }
+
+		before do
+			request.headers['Authorization'] = "Bearer #{token}"
+		end
 
 		it 'when the user information is correct' do
-			get :get_user_info, params: { email: user.email }
+			post :get_user_info
 
 			expect(response).to have_http_status(200)
 			expect(JSON.parse(response.body)['user']).to include({
@@ -82,15 +88,6 @@ RSpec.describe User::UsersController, type: :controller do
 				'user_name' => user.user_name,
 				'email' => user.email,
 				'picture' => user.picture
-			})
-		end
-
-		it 'returns an error when the user is not found' do
-			get :get_user_info, params: { email: 'nonexistent@example.com' }
-
-			expect(response).to have_http_status(:bad_request)
-			expect(JSON.parse(response.body)).to include({
-				'error' => I18n.t('user.users.get_user_info.failed')
 			})
 		end
 	end

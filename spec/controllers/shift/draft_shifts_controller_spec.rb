@@ -8,7 +8,6 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 		let(:store) { create(:store) }
 		let(:shift_submission_request) { create(:shift_submission_request, store: store) }
 		let(:params) {{
-			email: user.email,
 			preferredShifts: [
 				{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false}
 			]
@@ -46,7 +45,6 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 
 			context 'when dates are multiple' do
 				let(:params) {{
-					email: user.email,
 					preferredShifts: [
 						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},
 						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},

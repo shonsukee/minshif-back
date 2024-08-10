@@ -4,10 +4,10 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 	describe 'POST #create' do
 		let(:user) { create(:user) }
 		let!(:membership) { create(:membership, user: user, current_store: true) }
+		let(:token) { Jwt::TokenProvider.call(user.id) }
 		let(:store) { create(:store) }
 		let(:shift_submission_request) { create(:shift_submission_request, store: store) }
 		let(:params) {{
-			email: user.email,
 			preferredShifts: [
 				{
 					shift_submission_request_id: shift_submission_request.id,
@@ -32,6 +32,10 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 		end
 
 		context 'with valid attributes' do
+			before do
+				request.headers['Authorization'] = "Bearer #{token}"
+			end
+
 			context 'when the date is a single' do
 				it 'is valid and adds a new preferred shift' do
 					post :create, params: params
@@ -48,7 +52,6 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 
 			context 'when dates are multiple' do
 				let(:params) {{
-					email: user.email,
 					preferredShifts: [
 						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},
 						{shift_submission_request_id: shift_submission_request.id, date: date, start_time: start_time, end_time: end_time, notes: notes, is_registered: false},
@@ -64,6 +67,10 @@ RSpec.describe Shift::PreferredShiftsController, type: :controller do
 		end
 
 		context 'with invalid attributes' do
+			before do
+				request.headers['Authorization'] = "Bearer #{token}"
+			end
+
 			context 'when setting incorrect date' do
 				let(:date) { Date.parse('2026-01-07') }
 				it 'is not valid and adds an error on shift_date' do
