@@ -3,10 +3,9 @@ require 'rails_helper'
 RSpec.describe Store::StoreController, type: :controller do
 	describe 'POST #create' do
 		let(:input_store_params) {{
-			store: {
-				store_name: store_name,
-				location: '木ノ葉隠れの里',
-			}
+			email: @current_user.email,
+			store_name: store_name,
+			location: '木ノ葉隠れの里',
 		}}
 
 		before(:each) do
@@ -45,7 +44,10 @@ RSpec.describe Store::StoreController, type: :controller do
 		context "when store already exists" do
 			let(:store_name) { "ラーメン一楽" }
 			before do
-				Store.create!(input_store_params[:store])
+				Store.create!(
+					store_name: input_store_params[:store_name],
+					location: input_store_params[:location]
+				)
 			end
 
 			it "does not allow duplicate store names" do
@@ -72,8 +74,8 @@ RSpec.describe Store::StoreController, type: :controller do
 			let(:store) { create(:store) }
 			let!(:membership) { create(:membership, user: user, store: store, current_store: true) }
 
-			it "return correct staff list" do
-				get :fetch_staff_list
+			it "returns correct staff list" do
+				get :fetch_staff_list, params: { email: user.email }
 				expect(response).to have_http_status(:success)
 				staff_list = JSON.parse(response.body)['staff_list']
 
@@ -81,14 +83,16 @@ RSpec.describe Store::StoreController, type: :controller do
 				expect(staff_list.first).to include(
 					'id' => membership.id,
 					'user_name' => user.user_name,
+					'email' => user.email,
+					'picture' => user.picture,
 					'privilege' => 'staff'
 				)
 			end
 		end
 
 		context "with invalid attributes" do
-			it "had not logged in to the shop" do
-				get :fetch_staff_list
+			it "returns error when user is not logged in to the shop" do
+				get :fetch_staff_list, params: { email: user.email }
 
 				expect(JSON.parse(response.body)).to eq({
 					"error"	=> I18n.t('store.stores.fetch_staff_list.not_found')
