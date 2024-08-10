@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 	namespace 'user' do
 		post '/create', to: 'users#create'
-		get '/get_user_info', to: 'users#get_user_info'
+		post '/get_user_info', to: 'users#get_user_info'
 	end
 
 	namespace 'shift' do

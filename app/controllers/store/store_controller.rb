@@ -1,4 +1,6 @@
 class Store::StoreController < ApplicationController
+	before_action :authenticate, only: [:create, :fetch_staff_list]
+
 	def create
 		store = Store.new(
 			store_name: input_store_params[:store_name],
@@ -12,12 +14,11 @@ class Store::StoreController < ApplicationController
 			return
 		end
 
-		ActiveRecord::Base.transaction do
-			login_user = User.find_by(email: input_store_params[:email])
+		begin
 			store.save!
 			# 店舗作成者は権限2に設定
 			Membership.create!(
-				user_id: login_user.id,
+				user_id: @current_user.id,
 				store_id: store.id,
 				current_store: true,
 				privilege: 2
@@ -29,35 +30,18 @@ class Store::StoreController < ApplicationController
 	end
 
 	def fetch_staff_list
-		email = params[:email]
-		if email == "undefined"
-			render json: { error: "emailがありません" }, status: :bad_request
-			return
-		end
-		login_user = User.find_by(email: email)
-		if login_user.nil?
-			render json: { error: "ユーザが見つかりません" }, status: :not_found
-			return
-		end
-
-		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
-		if login_store.nil?
+		login_store = Membership.with_users(@current_user.id).current
+		if login_store.none?
 			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found') }, status: :not_found
 			return
 		end
 
-		staff_memberships = Membership.with_stores(login_store.store_id)
+		staff_memberships = Membership.with_stores(login_store[0].store_id)
 										.select(:id, :user_id, :privilege)
 										.includes(:user)
 
 		staff_list = staff_memberships.map do |staff|
-			{
-				id: staff.id,
-				privilege: staff.privilege,
-				user_name: staff.user.user_name,
-				email: staff.user.email,
-				picture: staff.user.picture
-			}
+			{ id: staff.id, privilege: staff.privilege, user_name: staff.user.user_name }
 		end
 
 		render json: { staff_list: staff_list }, status: :ok
@@ -66,6 +50,6 @@ class Store::StoreController < ApplicationController
 	private
 
 	def input_store_params
-		params.permit(:store_name, :location, :email)
+		params.require(:store).permit(:store_name, :location)
 	end
 end
