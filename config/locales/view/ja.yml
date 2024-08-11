@@ -1,5 +1,5 @@
 ja:
-  defaults:
+  default:
     message:
       require_login: "ログインしてください"
       require_membership: "所属情報が見つかりません"
@@ -47,7 +47,8 @@ ja:
         already_created: "指定された店舗名は既に作成されています"
         empty: "店舗名が登録されていません"
       fetch_staff_list:
-        not_found: "店情報が取得できませんでした"
+        not_found_user: "ユーザが取得できませんでした"
+        not_found_membership: "店情報が取得できませんでした"
   invitation:
     invitations:
       create:

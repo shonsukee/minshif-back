@@ -1,9 +1,20 @@
 class Shift::ShiftSubmissionRequestsController < ApplicationController
-	before_action :authenticate, only: [:create, :wanted]
-
 	def create
+		# ログインユーザの所属情報を取得
+		login_user = User.find_by(email: params[:email])
+		if login_user.nil?
+			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found_user') }, status: :bad_request
+			return
+		end
+
+		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
+		if login_store.nil?
+			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found_membership') }, status: :bad_request
+			return
+		end
+
 		@shift_submission_request = ShiftSubmissionRequest.new(
-			store_id: input_params['store_id'],
+			store_id: login_store.store_id,
 			start_date: input_params['start_date'],
 			end_date: input_params['end_date'],
 			deadline_date: input_params['deadline_date'],
@@ -20,14 +31,20 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 
 	def wanted
 		# ログインユーザの所属情報を取得
-		@current_membership = @current_user.memberships.current.first
-		if !@current_membership
-			render json: { error: I18n.t('default.message.require_membership') }
+		login_user = User.find_by(email: params[:email])
+		if login_user.nil?
+			render json: { error: "ユーザが見つかりません" }, status: :not_found
+			return
+		end
+
+		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
+		if login_store.nil?
+			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found') }, status: :not_found
 			return
 		end
 
 		# 募集中のシフト提出依頼を取得
-		data = ShiftSubmissionRequest.wanted(@current_membership.store_id)
+		data = ShiftSubmissionRequest.wanted(login_store.store_id)
 		if data
 			render json: { data: data }, status: :ok
 		else
@@ -38,6 +55,6 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 	private
 
 	def input_params
-		params.require(:shift_submission_request).permit(:start_date, :end_date, :deadline_date, :deadline_time, :notes, :store_id)
+		params.require(:shift_submission_request).permit(:start_date, :end_date, :deadline_date, :deadline_time, :notes)
 	end
 end
