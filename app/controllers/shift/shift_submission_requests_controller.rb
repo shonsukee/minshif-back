@@ -42,9 +42,14 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found') }, status: :not_found
 			return
 		end
+		p "----------dddddd-----------------"
+		p Shift.where(membership_id: login_store.id)
+		p "----------------aaaaa-----------"
+		p Shift.where(membership_id: login_store.id).select(:shift_submission_request_id)
+		p "----------------a-----------"
 
 		# 募集中のシフト提出依頼を取得
-		data = ShiftSubmissionRequest.wanted(login_store.store_id)
+		data = ShiftSubmissionRequest.wanted(login_store)
 		if data
 			render json: { data: data }, status: :ok
 		else
