@@ -44,7 +44,7 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 		end
 
 		# 募集中のシフト提出依頼を取得
-		data = ShiftSubmissionRequest.wanted(login_store.store_id)
+		data = ShiftSubmissionRequest.wanted(login_store)
 		if data
 			render json: { data: data }, status: :ok
 		else

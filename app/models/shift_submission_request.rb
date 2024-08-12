@@ -9,7 +9,11 @@ class ShiftSubmissionRequest < ApplicationRecord
 	validate :start_date_is_less_than_end_date
 	validate :deadline_is_less_than_start_date
 
-	scope :wanted, ->(store_id) { where('store_id = ? AND deadline_date >= ?',  store_id, Date.today) }
+	scope :wanted, ->(membership) {
+		where('store_id = ? AND deadline_date >= ?', membership.store_id, Date.today)
+		.where.not(id: Shift.where(membership_id: membership.id).where.not(shift_submission_request_id: nil).select(:shift_submission_request_id))
+	}
+
 
 	private
 
