@@ -18,6 +18,9 @@ ja:
         success: "minshifへ、ようこそ"
       get_user_info:
         failed: "ユーザが見つかりませんでした"
+      fetch_membership:
+        failed: "所属情報が見つかりませんでした"
+        success: "所属情報を取得しました"
   shift:
     shifts:
       fetch_shifts:
