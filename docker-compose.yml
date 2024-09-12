@@ -23,7 +23,7 @@ services:
     env_file:
       - .env
     networks:
-      my_network:
+       - my_network
 
   api:
     container_name: rails_api
@@ -37,7 +37,7 @@ services:
     depends_on:
       - db
     networks:
-      my_network:
+       - my_network
 
 volumes:
   mysql_volumes:

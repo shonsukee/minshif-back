@@ -9,9 +9,6 @@ gem "rails", "~> 7.0.8"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
-# Use mysql as the database for Active Record
-gem "mysql2", "~> 0.5.6"
-
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
 
@@ -55,6 +52,9 @@ gem "turbolinks", "~> 2.5"
 gem "rack-cors"
 
 group :development, :test do
+  # Use mysql as the database for Active Record
+  gem "mysql2", "~> 0.5.6"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
 
@@ -79,6 +79,10 @@ group :test do
   gem "selenium-webdriver"
   gem 'faker'
   gem 'database_cleaner'
+end
+
+group :production do
+  gem "pg", "~> 1.4"
 end
 
 # HTTP通信
