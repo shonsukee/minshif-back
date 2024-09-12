@@ -16,10 +16,15 @@ RUN mkdir /minshif
 
 WORKDIR /minshif
 
-COPY Gemfile /minshif/Gemfile
-
-COPY Gemfile.lock /minshif/Gemfile.lock
+COPY Gemfile Gemfile.lock /minshif/
 
 RUN bundle install
 
 COPY . /minshif/
+
+RUN bundle exec rails assets:precompile
+RUN bundle exec rails db:migrate
+
+EXPOSE 8000
+
+CMD ["bundle", "exec", "rails", "server", "-p", "8000", "-b", "0.0.0.0"]
