@@ -25,4 +25,4 @@ COPY . /minshif/
 RUN bundle exec rails assets:precompile
 RUN bundle exec rails db:migrate
 
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "server", "-p", "8000", "-b", "0.0.0.0"]
