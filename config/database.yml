@@ -1,23 +1,29 @@
 default: &default
-  adapter: mysql2
-  encoding: utf8mb4
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # 権限を設定したユーザーを指定
-  username: root
-  password: "root"
-  host: db
 
 development:
   <<: *default
+  adapter: mysql2
+  encoding: utf8
   database: minshif_development
+  username: root
+  password: root
+  host: db
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 test:
   <<: *default
+  adapter: mysql2
+  encoding: utf8
   database: minshif_test
+  username: root
+  password: root
+  host: db
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 production:
   <<: *default
   adapter: postgresql
   encoding: unicode
-  pool: 5
-url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL'] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
