@@ -40,4 +40,4 @@ RUN bundle exec rails assets:precompile
 EXPOSE 8000
 
 # Use $PORT environment variable to dynamically assign the port
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "8000"]
+CMD ["bash", "-c", "bundle exec rails server -b 0.0.0.0 -p ${PORT}"]
