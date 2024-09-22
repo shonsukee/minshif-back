@@ -2,7 +2,7 @@ FROM ruby:3.2.2
 
 # Install dependencies
 RUN apt-get update -qq \
-    && apt-get install -y build-essential libpq-dev
+    && apt-get install -y build-essential default-libmysqlclient-dev libpq-dev
 
 # Install Node.js (LTS)
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
@@ -34,10 +34,10 @@ RUN yarn install
 RUN bundle exec rails assets:precompile
 
 # Run database migrations (migrate only if db exists, otherwise skip in production)
-# RUN if [ "$RAILS_ENV" != "production" ]; then bundle exec rails db:migrate; fi
+RUN if [ "$RAILS_ENV" != "production" ]; then bundle exec rails db:migrate; fi
 
 # Expose the port (not strictly necessary in Render, but good for documentation)
 EXPOSE 8000
 
 # Use $PORT environment variable to dynamically assign the port
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "${PORT:-8000}"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "8000"]
