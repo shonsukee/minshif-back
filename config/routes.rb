@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+	get '/', to: 'static_page#index'
+
 	namespace 'user' do
 		post '/create', to: 'users#create'
 		get '/get_user_info', to: 'users#get_user_info'
