@@ -41,7 +41,7 @@ class User::UsersController < ApplicationController
 	private
 
 	def input_params
-		params.permit(:code, :invitation_id, user: [:id, :name, :email, :picture])
+		params.permit(:code, :invitation_id, user: [:id, :user_name, :email, :picture])
 	end
 
 	def input_user_params
