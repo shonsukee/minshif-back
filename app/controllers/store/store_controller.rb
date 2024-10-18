@@ -20,7 +20,7 @@ class Store::StoreController < ApplicationController
 				user_id: login_user.id,
 				store_id: store.id,
 				current_store: true,
-				privilege: 2
+				privilege: :manager
 			)
 			render json: { response: I18n.t('store.stores.create.success') }
 		rescue ActiveRecord::RecordInvalid => e
