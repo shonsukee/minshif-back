@@ -18,8 +18,8 @@ ApplicationRecord.transaction do
 		picture: picture,
 	)
 
-	refresh_token = 'abc'
-	access_token = 'abc'
+	refresh_token = BCrypt::Password.create("shonsuke")
+	access_token = BCrypt::Password.create("shonsuke")
 	Token.create(
 		user_id: user.id,
 		refresh_token: refresh_token,
