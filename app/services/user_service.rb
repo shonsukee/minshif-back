@@ -13,7 +13,7 @@ class UserService
 			# ユーザの保存
 			if user.update(input_params[:user])
 				begin
-					Membership.create_with_invitation(invitation_id[:invitation_id], user.id) if invitation_id[:invitation_id].present?
+					Membership.create_with_invitation(invitation_id, user.id) if invitation_id.present?
 					# 店舗に所属しているか
 					is_affiliated = Membership.current.with_users(user.id).count > 0
 					{ success?: true, message: I18n.t('user.users.create.success'), is_affiliated: is_affiliated }
