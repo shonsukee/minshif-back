@@ -9,9 +9,6 @@ gem "rails", "~> 7.0.8"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
-# Use postgresql as the database for Active Record
-gem "pg", "~> 1.1"
-
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
 
@@ -55,8 +52,15 @@ gem "turbolinks", "~> 2.5"
 gem "rack-cors"
 
 group :development, :test do
+  # Use mysql as the database for Active Record
+  gem "mysql2", "~> 0.5.6"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+
+  gem "factory_bot_rails"
+  gem "rspec-rails"
+  gem "webmock"
 end
 
 group :development do
@@ -66,19 +70,32 @@ group :development do
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
 
-  # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
-  # gem "spring"
+  gem "spring-commands-rspec"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem 'rspec-rails'
-  gem "factory_bot_rails"
   gem 'faker'
+  gem 'database_cleaner'
 end
 
-gem "shakapacker", "= 7.1"
+group :production do
+  gem "pg", "~> 1.4"
+end
 
-gem "react-rails", "= 3.1.1"
+# HTTP通信
+gem "httparty"
+
+# 環境変数
+gem 'dotenv-rails'
+
+# Google Resource
+gem "google-apis-calendar_v3"
+
+# ユーザ管理
+gem "jwt"
+
+# localeの利用
+gem "rails-i18n"

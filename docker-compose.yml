@@ -1,30 +1,43 @@
 version: '3'
 
+networks:
+  my_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+
 services:
   db:
-    image: postgres:9.6
+    image: mysql:8.0
     container_name: rails_db
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_volumes:/var/lib/mysql
     env_file:
       - .env
-    
+    networks:
+       - my_network
+
   api:
     container_name: rails_api
     image: minshif
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle install && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bash -c "rm -f tmp/pids/server.pid &&  bundle install && bundle exec rails s -p 8000 -b '0.0.0.0'"
     volumes:
       - .:/minshif
     ports:
-      - "3001:3000"
+      - "8000:8000"
     depends_on:
       - db
+    networks:
+       - my_network
 
 volumes:
-  postgres_data:
+  mysql_volumes:
