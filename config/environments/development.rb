@@ -88,4 +88,7 @@ Rails.application.configure do
 	enable_starttls: true
   }
   config.action_mailer.preview_path = "#{Rails.root}/lib/mailer_previews"
+
+  # ngrok用セキュリティ設定
+  config.hosts.clear
 end

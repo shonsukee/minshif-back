@@ -24,4 +24,9 @@ Rails.application.routes.draw do
 	end
 
 	post '/invitation', to: 'invitations#create'
+
+	# namespace 'line' do
+	# end
+
+	post '/', to: 'line_bots#callback'
 end
