@@ -1,6 +1,14 @@
 require 'line/bot'
 
 class LineBotsController < ApplicationController
+	def send_shift_message(user_id)
+		message = {
+			type: 'text',
+			text: '明日シフトがあります！'
+		}
+		client.push_message(user_id, message)
+	end
+
 	def callback
 		body = request.body.read
 		signature = request.env['HTTP_X_LINE_SIGNATURE']
