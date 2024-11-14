@@ -1,6 +1,6 @@
 require 'line/bot'
 
-class LineBotsController < ApplicationController
+class Line::LineBotsController < ApplicationController
 	def send_shift_message(user_id)
 		message = {
 			type: 'text',
@@ -55,7 +55,19 @@ class LineBotsController < ApplicationController
 		head :ok
 	end
 
+	def register_auth_code
+		if AuthCode.register_auth_code(input_params[:auth_code], input_params[:user_id])
+			render json: { message: I18n.t('line_bot.register_auth_code.success') }, status: :ok
+		else
+			render json: { message: I18n.t('line_bot.register_auth_code.failed') }, status: :not_found
+		end
+	end
+
 	private
+
+	def input_params
+		params.permit(:user_id, :auth_code)
+	end
 
 	def client
 		@client ||= Line::Bot::Client.new { |config|

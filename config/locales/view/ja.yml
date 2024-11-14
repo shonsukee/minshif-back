@@ -76,3 +76,7 @@ ja:
       main: "minshif3420@gmail.com"
       test: "minshif.test@gmail.com"
       invitation: "minshif.invitation@gmail.com"
+  line_bot:
+    register_auth_code:
+      success: "認証コードを登録しました"
+      failed: "認証コードの登録に失敗しました"

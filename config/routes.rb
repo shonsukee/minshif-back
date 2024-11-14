@@ -29,6 +29,10 @@ Rails.application.routes.draw do
 
 	post '/', to: 'line_bots#callback'
 
+	namespace 'line' do
+		post '/auth_code', to: "line_bots#register_auth_code"
+	end
+
 	Sidekiq::Web.use(Rack::Auth::Basic) do |user_id, password|
 		[user_id, password] == [ENV['SIDEKIQ_BASIC_AUTH_USER'], ENV['SIDEKIQ_BASIC_AUTH_PASSWORD']]
 	end
