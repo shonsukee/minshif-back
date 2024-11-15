@@ -1,12 +1,12 @@
 require 'line/bot'
 
 class LineBotsController < ApplicationController
-	def send_shift_message(user_id)
+	def send_shift_message(line_user_id)
 		message = {
 			type: 'text',
 			text: '明日シフトがあります！'
 		}
-		client.push_message(user_id, message)
+		client.push_message(line_user_id, message)
 	end
 
 	def callback
