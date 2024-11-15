@@ -11,4 +11,8 @@ class AuthCode < ApplicationRecord
 			false
 		end
 	end
+
+	def auth_code_matches?(input_code)
+		self.auth_code == input_code
+	end
 end

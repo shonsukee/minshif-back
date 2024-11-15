@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_14_132739) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_14_140959) do
   create_table "auth_codes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "user_id", comment: "ユーザ情報の外部キー"
     t.string "auth_code", null: false, comment: "LINE Bot用認証コード"
@@ -133,6 +133,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_14_132739) do
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "line_user_id", comment: "LINE Bot用ユーザID"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
