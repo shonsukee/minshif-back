@@ -12,6 +12,13 @@ class AuthCode < ApplicationRecord
 		end
 	end
 
+	def self.fetch_auth_code(user_id)
+		expired = 30 * 60
+		where(user_id: user_id)
+			.where('updated_at > ?', Time.current - expired)
+			.first
+	end
+
 	def auth_code_matches?(input_code)
 		self.auth_code == input_code
 	end
