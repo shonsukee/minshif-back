@@ -99,3 +99,11 @@ gem "jwt"
 
 # localeの利用
 gem "rails-i18n"
+
+# LINE Bot導入
+gem 'line-bot-api'
+
+# 定期実行
+## バックグラウンド処理用
+gem 'sidekiq'
+gem 'sidekiq-scheduler'

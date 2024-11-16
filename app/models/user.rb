@@ -3,6 +3,7 @@ class User < ApplicationRecord
 
 	has_many :tokens, dependent: :destroy
 	has_many :memberships
+	has_many :auth_codes
 	has_many :templates
 
 	validates :user_name, presence: true, length: {maximum: 200}
@@ -21,6 +22,17 @@ class User < ApplicationRecord
 			UserMailer.invitation(invitee_user, invite_link, manager).deliver_now!
 		rescue StandardError => e
 			e.message
+		end
+	end
+
+	def self.register_line_id(user_id, line_user_id)
+		user = find_by(id: user_id)
+
+		if user
+			user.update(line_user_id: line_user_id)
+			true
+		else
+			false
 		end
 	end
 end

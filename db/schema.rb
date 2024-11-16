@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_25_073502) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_14_140959) do
+  create_table "auth_codes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.string "auth_code", null: false, comment: "LINE Bot用認証コード"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_auth_codes_on_user_id"
+  end
+
   create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
     t.string "store_id", comment: "店舗情報の外部キー"
     t.integer "day_of_week", null: false, comment: "曜日"
@@ -125,9 +133,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_25_073502) do
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "line_user_id", comment: "LINE Bot用ユーザID"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  add_foreign_key "auth_codes", "users"
   add_foreign_key "business_hours", "stores"
   add_foreign_key "invitations", "memberships"
   add_foreign_key "memberships", "stores"
