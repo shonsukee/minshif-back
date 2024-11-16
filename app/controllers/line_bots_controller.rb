@@ -1,10 +1,16 @@
 require 'line/bot'
 
 class LineBotsController < ApplicationController
-	def send_shift_message(line_user_id)
+	def send_shift_message(line_user_id, store_name, start_time, end_time)
+		tomorrow = Date.tomorrow.strftime('%m/%d')
 		message = {
 			type: 'text',
-			text: '明日シフトがあります！'
+			text: I18n.t('line_bot.send_shift_message.notify',
+				date: tomorrow,
+				store_name: store_name,
+				start_time: start_time.strftime('%H:%M'),
+				end_time: end_time.strftime('%H:%M')
+			)
 		}
 		client.push_message(line_user_id, message)
 	end
@@ -19,7 +25,7 @@ class LineBotsController < ApplicationController
 		events = client.parse_events_from(body)
 		message = {
 			type: 'text',
-			text: 'チャットしていただきありがとうございます！\nLINE Botはテキストのみの対応です😭\nご了承ください'
+			text: I18n.t('line_bot.callback.not_text')
 		}
 		events.each do |event|
 			case event
@@ -30,26 +36,26 @@ class LineBotsController < ApplicationController
 					line_user_id = event['source']['userId']
 
 					if code.to_s == "ヘルプ"
-						message[:text] = "シフト通知をするLINE Botの設定方法を紹介します！\n\n1. アプリで整数4桁の認証コードを生成する\n2. 認証コードをコピーする\n3. LINE Botへ認証コードを送信する\n\n認証に成功すると次の午前9時からシフト通知を行います🚀"
+						message[:text] = I18n.t('line_bot.callback.help')
 					else
 						user = User.find_by(line_user_id: line_user_id)
 
 						# 既に登録済みの場合
 						if user
-							message[:text] = "既に登録されているようです👀\nいつもご利用いただきありがとうございます！"
+							message[:text] = I18n.t('line_bot.callback.already_registered')
 
 						# 未登録の場合
 						elsif code.match?(/\A\d+\z/) && code.to_i.abs.to_s.size == 4
 							auth_code_record = AuthCode.find_by(auth_code: code)
 
 							if auth_code_record&.auth_code_matches?(code) && User.register_line_id(auth_code_record.user_id, line_user_id)
-								message[:text] = "認証に成功しました🚀\nご利用いただきありがとうございます！"
+								message[:text] = I18n.t('line_bot.callback.success')
 							else
-								message[:text] = "認証に失敗しました😭\nお手数をおかけしますが、アプリで認証コードを再生成してください"
+								message[:text] = I18n.t('line_bot.callback.failed')
 							end
 						else
 							# 整数４桁で入力するよう促す
-							message[:text] = "チャットしていただきありがとうございます！\nLINE Botは個別にチャットすることはできません😭\n\n使い方の詳細は「ヘルプ」とお問合せください"
+							message[:text] = I18n.t('line_bot.callback.invalid_code')
 						end
 					end
 				end
