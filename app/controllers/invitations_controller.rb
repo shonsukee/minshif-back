@@ -50,7 +50,7 @@ class InvitationsController < ApplicationController
 						invitee_email: invitee_email,
 						expired_at: DateTime.now + 1.day
 					)
-					render json: { response: I18n.t('invitation.invitations.create.success_invited') }
+					render json: { msg: I18n.t('invitation.invitations.create.success_invited') }
 				rescue StandardError => e
 					render json: { error: e.message }
 				end
