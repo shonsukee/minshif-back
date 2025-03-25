@@ -1,25 +1,77 @@
 ApplicationRecord.transaction do
-    User.delete_all
-    Group.delete_all
-    Schedule.delete_all
-    ScheduleList.delete_all
-    Membership.delete_all
-    
+	ShiftSubmissionRequest.delete_all
+	Shift.delete_all
+	Membership.delete_all
+	Token.delete_all
+	BusinessHour.delete_all
+	SpecialBusinessHour.delete_all
+	Template.delete_all
+	User.delete_all
+	Store.delete_all
+
 	# 管理者ユーザ
-	hashed_password = BCrypt::Password.create("shonsuke")
-    User.create(user_name: 'shonsuke', email: 'shonsuke@gmail.com', password_digest: hashed_password, privilege: 3)
+	picture = 'https://play-lh.googleusercontent.com/ZyWNGIfzUyoajtFcD7NhMksHEZh37f-MkHVGr5Yfefa-IX7yj9SMfI82Z7a2wpdKCA=w240-h480-rw'
+	user = User.create(
+		id: '1',
+		user_name: 'shonsuke',
+		email: 'shonsuke@gmail.com',
+		picture: picture,
+	)
 
-	# 管理用グループ, 9-18時のホワイト企業
-	open_time = Time.parse("09:00:00")
-	close_time = Time.parse("18:00:00")
-	Group.create(group_name: "shonsuke株式会社", open_time: open_time, close_time: close_time)
-	Membership.create(user_id: User.first.id, group_id: Group.first.id, current_group: true)
+	refresh_token = BCrypt::Password.create("shonsuke")
+	access_token = BCrypt::Password.create("shonsuke")
+	Token.create(
+		user_id: user.id,
+		refresh_token: refresh_token,
+		access_token: access_token
+	)
 
-	# スケジュール
-	# 2024/01/01 9:00~18:00の仕事
-	work_start = Time.parse("09:00:00")
-	work_end = Time.parse("18:00:00")
-	work_date = Date.parse("2024-1-1")
-	schedule_list = ScheduleList.create(user_id: User.first.id, title: "Hello New World!", description: "あけおめ", work_start: work_start, work_end: work_end)
-	Schedule.create(membership_id: Membership.first.id, title: "Hello New World!", description: "あけおめ", work_date: work_date, work_start: work_start, work_end: work_end)
+	# 管理用グループ
+	location = '東京都千代田区永田町１丁目７−１'
+	store = Store.create(
+		id: '1',
+		store_name: 'スーパーshonsuke',
+		location: location
+	)
+
+	# 所属
+	membership = Membership.create(
+		user_id: user.id,
+		store_id: store.id,
+		current_store: true,
+		calendar_id: "",
+		privilege: 3
+	)
+
+	# 営業時間
+	# 日:0, 月:1, 火:2, 水:3, 木:4, 金:5, 土:6
+	open_time = Time.parse('09:00:00')
+	close_time = Time.parse('18:00:00')
+	for day_of_week in 1..5 do
+		BusinessHour.create(store_id: store.id, day_of_week: day_of_week, open_time: open_time, close_time: close_time)
+	end
+
+	# 休業
+	open_time = Time.parse('00:00:00')
+	close_time = Time.parse('00:00:00')
+	BusinessHour.create(store_id: store.id, day_of_week: 6, open_time: open_time, close_time: close_time)
+	BusinessHour.create(store_id: store.id, day_of_week: 0, open_time: open_time, close_time: close_time)
+
+	# 特別営業日
+	# 24時間営業にする
+	special_date = Date.parse('2025-01-01')
+	open_time = Time.parse('00:00:00')
+	close_time = Time.parse('23:59:59')
+	SpecialBusinessHour.create(store_id: store.id, special_date: special_date, open_time: open_time, close_time: close_time, notes: '元旦')
+
+	# テンプレート
+	start_time = Time.parse('09:00:00')
+	end_time = Time.parse('18:00:00')
+	Template.create(user_id: user.id, start_time: start_time, end_time: end_time, notes: '毎週水曜日分')
+
+	# 登録済みシフト
+	shift_date = Date.parse('2024-08-01')
+	Shift.create(membership_id: membership.id, shift_date: shift_date, start_time: start_time, end_time: end_time, notes: '初出勤', is_registered: false)
+
+	# シフト変更依頼は記述していない
 end

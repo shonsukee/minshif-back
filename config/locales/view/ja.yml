@@ -1,0 +1,91 @@
+ja:
+  default:
+    message:
+      require_login: "ログインしてください"
+      require_membership: "所属情報が見つかりません"
+    errors:
+      past_date: "過去の日付は選択できません"
+      start_date_after_end_date: "開始日時は終了日時より後の日時を選択してください"
+      deadline_date_after_end_date: "締切日時は終了日時より後の日時を選択してください"
+      messages:
+        email_blank: "メールアドレスを入力してください"
+        user_not_found: "ユーザが見つかりませんでした"
+        store_not_found: "店舗が見つかりませんでした"
+  user:
+    users:
+      create:
+        already_created: "お帰りなさい"
+        success: "minshifへ、ようこそ"
+      get_user_info:
+        failed: "ユーザが見つかりませんでした"
+      fetch_membership:
+        failed: "所属情報が見つかりませんでした"
+        success: "所属情報を取得しました"
+  shift:
+    shifts:
+      fetch_shifts:
+        login_required: "ログインしてください"
+    shift_submission_requests:
+      create:
+        success: "シフト提出を依頼しました"
+      wanted:
+        not_found: "募集中のシフト提出依頼はありません"
+    preferred_shifts:
+      create:
+        success: "希望シフトを登録しました"
+        failure: "希望シフトの登録に失敗しました"
+        invalid_time: "時間が無効です"
+        out_of_range: "時間が範囲外です"
+        no_shift_request: "シフト提出依頼がありません"
+        no_membership: "所属情報がありません"
+        missing_time: "時間が指定されていません"
+    draft_shifts:
+      create:
+        success: "シフトを作成しました"
+        no_privilege: "権限がありません"
+  store:
+    stores:
+      create:
+        success: "店舗を作成しました"
+        already_created: "指定された店舗名は既に作成されています"
+        empty: "店舗名が登録されていません"
+      fetch_staff_list:
+        not_found_user: "ユーザが取得できませんでした"
+        not_found_membership: "店情報が取得できませんでした"
+  invitation:
+    invitations:
+      create:
+        success: "そのメールアドレスをスタッフリストに登録しました"
+        success_invited: "招待メールを送信しました"
+        already_joined: "そのメールアドレスは既に所属しています"
+        invalid_manager_info: "管理者情報が不正です。"
+        invalid_invitation: "招待情報が不正です。"
+        blank: "メールアドレスを入力してください"
+        failed: "招待メールの送信に失敗しました"
+  jwt:
+    invalid_token: "無効なトークンです"
+    expired_token: "トークンの有効期限が切れています"
+    unauthorized: "認証に失敗しました"
+    invalid_headers: "ヘッダーが不正です"
+  google:
+    failed_api_request: "APIリクエストに失敗しました"
+  user_mailer:
+    invitation:
+      subject: "【重要】minshif招待メール"
+    email:
+      main: "minshif3420@gmail.com"
+      test: "minshif.test@gmail.com"
+      invitation: "minshif.invitation@gmail.com"
+  line_bot:
+    register_auth_code:
+      success: "認証コードを登録しました"
+      failed: "認証コードの登録に失敗しました"
+    callback:
+      help: "シフト通知をするLINE Botの設定方法を紹介します！\n\n1. アプリで整数4桁の認証コードを生成する\n2. 認証コードをコピーする\n3. LINE Botへ認証コードを送信する\n\n認証に成功すると次の午前9時からシフト通知を行います🚀"
+      already_registered: "既に登録されているようです👀\nいつもご利用いただきありがとうございます！"
+      success: "認証に成功しました🚀\nご利用いただきありがとうございます！"
+      failed: "認証に失敗しました😭\nお手数をおかけしますが、アプリで認証コードを再生成してください"
+      invalid_code: "チャットしていただきありがとうございます！\nLINE Botは個別にチャットすることはできません😭\n\n使い方の詳細は「ヘルプ」とお問合せください"
+      not_text: "チャットしていただきありがとうございます！\nLINE Botはテキストのみの対応です😭\nご了承ください"
+    send_shift_message:
+      notify: "%{date} 【%{store_name}】でのシフトが予定されています。\n勤務時間は %{start_time} ~ %{end_time} です。\nお忘れなくご準備ください！"

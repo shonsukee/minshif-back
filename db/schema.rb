@@ -1,69 +1,152 @@
-ActiveRecord::Schema[7.0].define(version: 2023_11_14_142550) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "pgcrypto"
-  enable_extension "plpgsql"
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
 
-  create_table "groups", id: :uuid, default: -> { "gen_random_uuid()" }, comment: "グループ情報", force: :cascade do |t|
-    t.string "group_name", null: false, comment: "グループ名"
-    t.time "open_time", null: false, comment: "営業開始時間"
-    t.time "close_time", null: false, comment: "営業終了時間"
-    t.datetime "deleted_at", comment: "削除日時"
+ActiveRecord::Schema[7.0].define(version: 2024_11_14_140959) do
+  create_table "auth_codes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.string "auth_code", null: false, comment: "LINE Bot用認証コード"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_auth_codes_on_user_id"
   end
 
-  create_table "memberships", comment: "所属情報", force: :cascade do |t|
-    t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.uuid "group_id", comment: "グループIDの外部キー"
-    t.boolean "current_group", default: false, comment: "現在のグループ"
+  create_table "business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "営業時間情報", force: :cascade do |t|
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.integer "day_of_week", null: false, comment: "曜日"
+    t.time "open_time", null: false, comment: "開店時間"
+    t.time "close_time", null: false, comment: "閉店時間"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["group_id"], name: "index_memberships_on_group_id"
+    t.index ["store_id"], name: "index_business_hours_on_store_id"
+  end
+
+  create_table "invitations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "招待情報", force: :cascade do |t|
+    t.bigint "membership_id", comment: "招待者の所属情報の外部キー"
+    t.string "invitation_id", null: false, comment: "招待ID"
+    t.string "invitee_email", null: false, comment: "被招待者メールアドレス"
+    t.datetime "expired_at", comment: "有効期限"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_invitations_on_membership_id"
+  end
+
+  create_table "memberships", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "所属情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.boolean "current_store", default: false, comment: "現在のグループ"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "calendar_id"
+    t.integer "privilege", null: false
+    t.index ["store_id"], name: "index_memberships_on_store_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
-  create_table "schedule_lists", comment: "予定のテンプレートリスト情報", force: :cascade do |t|
-    t.uuid "user_id", comment: "ユーザIDの外部キー"
-    t.string "title", comment: "予定のタイトル"
-    t.text "description", comment: "予定の詳細"
-    t.time "work_start", null: false, comment: "開始時間"
-    t.time "work_end", null: false, comment: "終了時間"
+  create_table "shift_change_requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフト変更依頼情報", force: :cascade do |t|
+    t.bigint "shift_id", comment: "シフト情報の外部キー"
+    t.string "requestor", null: false, comment: "依頼者ID"
+    t.string "consenter", comment: "承諾者ID"
+    t.string "status", null: false, comment: "状態"
+    t.datetime "response_date", comment: "返信日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_schedule_lists_on_user_id"
+    t.index ["shift_id"], name: "index_shift_change_requests_on_shift_id"
   end
 
-  create_table "schedules", comment: "予定情報", force: :cascade do |t|
-    t.bigint "membership_id", comment: "所属ID"
-    t.string "title", comment: "予定のタイトル"
-    t.text "description", comment: "予定の詳細"
-    t.date "work_date", null: false, comment: "日付"
-    t.time "work_start", null: false, comment: "開始時間"
-    t.time "work_end", null: false, comment: "終了時間"
+  create_table "shift_submission_requests", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフト提出依頼情報", force: :cascade do |t|
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.date "start_date", null: false, comment: "開始日"
+    t.date "end_date", null: false, comment: "最終日"
+    t.date "deadline_date", comment: "締切日"
+    t.time "deadline_time", comment: "締切時間"
+    t.text "notes", comment: "備考"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["membership_id"], name: "index_schedules_on_membership_id"
+    t.index ["store_id"], name: "index_shift_submission_requests_on_store_id"
   end
 
-  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, comment: "ユーザ情報", force: :cascade do |t|
-    t.string "user_name", null: false, comment: "ユーザ名"
-    t.string "email", null: false, comment: "メールアドレス"
-    t.string "password_digest", null: false, comment: "パスワード"
-    t.integer "privilege", null: false, comment: "権限"
-    t.string "remember_me_token", comment: "記憶トークン"
-    t.datetime "remember_me_token_expired_at", comment: "記憶トークン有効期限"
-    t.string "reset_password_token", comment: "パスワード再設定トークン"
-    t.datetime "reset_password_token_expired_at", comment: "パスワード再設定トークン有効期限"
+  create_table "shifts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフト情報", force: :cascade do |t|
+    t.bigint "membership_id", comment: "所属情報の外部キー"
+    t.date "shift_date", null: false, comment: "希望日"
+    t.time "start_time", null: false, comment: "開始時間"
+    t.time "end_time", null: false, comment: "終了時間"
+    t.text "notes", comment: "備考"
+    t.boolean "is_registered", default: false, comment: "登録状態"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "shift_submission_request_id", comment: "シフト提出依頼の外部キー"
+    t.index ["membership_id"], name: "index_shifts_on_membership_id"
+    t.index ["shift_submission_request_id"], name: "index_shifts_on_shift_submission_request_id"
+  end
+
+  create_table "special_business_hours", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "特別営業日情報", force: :cascade do |t|
+    t.string "store_id", comment: "店舗情報の外部キー"
+    t.date "special_date", null: false, comment: "特別営業日"
+    t.time "open_time", null: false, comment: "開店時間"
+    t.time "close_time", null: false, comment: "閉店時間"
+    t.string "notes", comment: "備考"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id"], name: "index_special_business_hours_on_store_id"
+  end
+
+  create_table "stores", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "店舗情報", force: :cascade do |t|
+    t.string "store_name", null: false, comment: "店舗名"
+    t.string "location", comment: "場所"
     t.datetime "deleted_at", comment: "削除日時"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["remember_me_token"], name: "index_users_on_remember_me_token", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "memberships", "groups"
+  create_table "templates", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "シフトのテンプレート情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.time "start_time", null: false, comment: "開始時間"
+    t.time "end_time", null: false, comment: "終了時間"
+    t.text "notes", comment: "備考"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_templates_on_user_id"
+  end
+
+  create_table "tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "トークン情報", force: :cascade do |t|
+    t.string "user_id", comment: "ユーザ情報の外部キー"
+    t.text "access_token", comment: "アクセストークン"
+    t.text "refresh_token", comment: "リフレッシュトークン"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_tokens_on_user_id"
+  end
+
+  create_table "users", id: :string, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", comment: "ユーザ情報", force: :cascade do |t|
+    t.string "user_name", null: false, comment: "ユーザ名"
+    t.string "email", null: false, comment: "メールアドレス"
+    t.string "picture", null: false, comment: "ユーザ写真URL"
+    t.datetime "deleted_at", comment: "削除日時"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "line_user_id", comment: "LINE Bot用ユーザID"
+    t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  add_foreign_key "auth_codes", "users"
+  add_foreign_key "business_hours", "stores"
+  add_foreign_key "invitations", "memberships"
+  add_foreign_key "memberships", "stores"
   add_foreign_key "memberships", "users"
-  add_foreign_key "schedule_lists", "users"
-  add_foreign_key "schedules", "memberships"
+  add_foreign_key "shift_change_requests", "shifts"
+  add_foreign_key "shift_submission_requests", "stores"
+  add_foreign_key "shifts", "memberships"
+  add_foreign_key "shifts", "shift_submission_requests"
+  add_foreign_key "special_business_hours", "stores"
+  add_foreign_key "templates", "users"
+  add_foreign_key "tokens", "users"
 end

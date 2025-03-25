@@ -1,4 +1,5 @@
 class StaticPageController < ApplicationController
-  def index
-  end
+	def index
+		render json: { message: "hello from minshif server!" }
+	end
 end
