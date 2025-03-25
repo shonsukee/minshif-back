@@ -1,0 +1,9 @@
+:concurrency: 3
+:queues:
+  - default
+
+:scheduler:
+  :schedule:
+    scheduled_shift_message:
+      cron: "0 18 * * *"
+      class: "ScheduledShiftMessageJob"

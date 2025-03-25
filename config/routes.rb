@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
 	get '/', to: 'static_page#index'
 
@@ -24,4 +26,13 @@ Rails.application.routes.draw do
 	end
 
 	post '/invitation', to: 'invitations#create'
+
+	post '/', to: 'line_bots#callback'
+	post '/auth_code', to: "line_bots#register_auth_code"
+	get '/auth_code', to: "line_bots#fetch_auth_code"
+
+	Sidekiq::Web.use(Rack::Auth::Basic) do |user_id, password|
+		[user_id, password] == [ENV['SIDEKIQ_BASIC_AUTH_USER'], ENV['SIDEKIQ_BASIC_AUTH_PASSWORD']]
+	end
+	mount Sidekiq::Web => "/sidekiq"
 end
