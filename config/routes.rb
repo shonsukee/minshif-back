@@ -3,33 +3,28 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
 	get '/', to: 'static_page#index'
 
-	namespace 'user' do
-		post '/create', to: 'users#create'
-		get '/get_user_info', to: 'users#get_user_info'
-		get '/fetch_membership', to: 'users#fetch_membership'
-	end
+	get '/users', to: 'users#show'
+	post '/users', to: 'users#create'
+	get '/stores/:store_id/users', to: 'users#index'
 
-	namespace 'shift' do
-		post '/preferred_shifts', to: 'preferred_shifts#create'
+	get '/users/memberships', to: 'memberships#index'
 
-		post '/submitShiftRequest', to: 'shift_submission_requests#create'
-		get '/fetch_shift_request', to: 'shift_submission_requests#wanted'
+	get '/preferred-shifts', to: 'preferred_shifts#index'
+	post '/preferred-shifts', to: 'preferred_shifts#create'
 
-		get '/fetch_shifts', to: 'shifts#fetch_shifts'
+	get '/shift-submission-requests', to: 'shift_submission_requests#wanted'
+	post '/shift-submission-requests', to: 'shift_submission_requests#create'
 
-		post '/register_draft_shifts', to: 'draft_shifts#create'
-	end
+	get '/users/:id/store-shifts', to: 'shifts#index'
+	post '/shifts', to: 'shifts#create'
 
-	namespace 'store' do
-		post '/create', to: 'store#create'
-		get '/staff_list', to: 'store#fetch_staff_list'
-	end
+	post '/stores', to: 'stores#create'
 
-	post '/invitation', to: 'invitations#create'
+	post '/invitations', to: 'invitations#create'
 
 	post '/', to: 'line_bots#callback'
-	post '/auth_code', to: "line_bots#register_auth_code"
-	get '/auth_code', to: "line_bots#fetch_auth_code"
+	get '/bots/code', to: 'line_bots#index'
+	post '/bots/code', to: 'line_bots#create'
 
 	Sidekiq::Web.use(Rack::Auth::Basic) do |user_id, password|
 		[user_id, password] == [ENV['SIDEKIQ_BASIC_AUTH_USER'], ENV['SIDEKIQ_BASIC_AUTH_PASSWORD']]
