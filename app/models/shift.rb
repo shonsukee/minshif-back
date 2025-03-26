@@ -11,22 +11,22 @@ class Shift < ApplicationRecord
 	scope :registered_shift_for_date, ->(membership_id, shift_date) { where(membership_id: membership_id, shift_date: shift_date, is_registered: true) }
 
 	# 本登録シフト
-	def self.register_draft_shifts!(shifts_params, login_user)
-		register_shifts!(shifts_params, login_user, true)
+	def self.register_shifts!(shifts_params, login_user)
+		register!(shifts_params, login_user, true)
 	end
 
 	# 仮登録シフト
 	def self.register_preferred_shifts!(shifts_params, login_user)
-		register_shifts!(shifts_params, login_user, false)
+		register!(shifts_params, login_user, false)
 	end
 
 	private
 
-	def self.register_shifts!(shifts_params, login_user, is_draft_shifts)
+	def self.register!(shifts_params, login_user, is_confirmed)
 		ActiveRecord::Base.transaction do
 			shifts_params.each do |shift_params|
-				membership_id = find_membership_id(shift_params, login_user, is_draft_shifts)
-				raise ActiveRecord::RecordInvalid.new("Membership not found") if membership_id.nil?
+				membership_id = find_membership_id(shift_params, login_user, is_confirmed)
+				raise ActiveRecord::RecordInvalid.new('Membership not found') if membership_id.nil?
 
 				shift = build_shift(shift_params, membership_id)
 				validate_shift!(shift, shift_params[:shift_submission_request_id])
@@ -48,27 +48,27 @@ class Shift < ApplicationRecord
 		end
 	end
 
-	def self.find_membership_id(shift_params, current_user, is_draft_shifts)
-		if is_draft_shifts
+	def self.find_membership_id(shift_params, current_user, is_confirmed)
+		if is_confirmed
 			shift = Shift.with_id(shift_params[:id]).first
 			return shift.membership_id if shift.present?
 
 			# 希望シフトがない日付からの登録時にemailで検索
 			shift_register_user = User.find_by(email: shift_params[:email])
-			raise ActiveRecord::RecordInvalid.new("User not found") if shift_register_user.nil?
+			raise ActiveRecord::RecordInvalid.new('User not found') if shift_register_user.nil?
 
 			# シフトを登録する人のuser_idと管理者がログインしている店舗IDで検索
 			membership = Membership.where(user_id: shift_register_user.id, store_id: current_user.memberships.current.first.store_id)
 			return membership.first.id if membership.present?
 
-			raise ActiveRecord::RecordNotFound, "Membership not found"
+			raise ActiveRecord::RecordNotFound, 'Membership not found'
 		else
 			current_user.memberships.current.first.id
 		end
 	end
 
 	def self.build_shift(shift_params, membership_id)
-		Shift.new(
+		new(
 			membership_id: membership_id,
 			shift_submission_request_id: shift_params[:shift_submission_request_id],
 			shift_date: shift_params[:date],
@@ -80,7 +80,6 @@ class Shift < ApplicationRecord
 	end
 
 	def self.validate_shift!(shift, shift_submission_request_id)
-		validator = ShiftValidator.new(shift, shift_submission_request_id)
-		validator.validate
+		ShiftValidator.new(shift, shift_submission_request_id).validate
 	end
 end

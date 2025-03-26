@@ -67,16 +67,16 @@ class LineBotsController < ApplicationController
 		head :ok
 	end
 
-	def register_auth_code
-		if AuthCode.register_auth_code(input_register_params[:auth_code], input_register_params[:user_id])
-			render json: { message: I18n.t('line_bot.register_auth_code.success') }, status: :ok
+	def create
+		if AuthCode.create(input_register_params[:auth_code], input_register_params[:user_id])
+			render json: { message: I18n.t('line_bot.create.success') }, status: :ok
 		else
-			render json: { message: I18n.t('line_bot.register_auth_code.failed') }, status: :not_found
+			render json: { message: I18n.t('line_bot.create.failed') }, status: :not_found
 		end
 	end
 
-	def fetch_auth_code
-		auth_code = AuthCode.fetch_auth_code(input_fetch_params[:user_id])
+	def index
+		auth_code = AuthCode.index(input_fetch_params[:user_id])
 		render json: { message: auth_code }
 	end
 
