@@ -4,7 +4,7 @@ class Membership < ApplicationRecord
 	has_many :shifts
 	has_many :invitations
 
-	before_save :ensure_only_one_current_store if :current_store_changed?
+	before_save :ensure_only_one_current_store, if: :current_store_changed?
 
 	enum :privilege, { staff: 1, manager: 2, developer: 3 }
 
@@ -28,6 +28,10 @@ class Membership < ApplicationRecord
 		rescue StandardError => e
 			e.message
 		end
+	end
+
+	def self.reset_current_store(user_id)
+		Membership.where(user_id: user_id, current_store: true).update_all(current_store: false)
 	end
 
 	private

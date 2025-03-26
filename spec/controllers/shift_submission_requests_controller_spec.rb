@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
+RSpec.describe ShiftSubmissionRequestsController, type: :controller do
 	describe 'POST #create' do
 		let(:user) { create(:user) }
 		let!(:membership) { create(:membership, user: user, current_store: true) }
@@ -109,7 +109,7 @@ RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
 				it "does not create a shift submission request" do
 					post :create, params: params
 					expect(response).to have_http_status(400)
-					expect(response.body).to include(I18n.t('store.stores.fetch_staff_list.not_found_user'))
+					expect(response.body).to include(I18n.t('store.stores.fetch.not_found_user'))
 				end
 			end
 
@@ -122,7 +122,7 @@ RSpec.describe Shift::ShiftSubmissionRequestsController, type: :controller do
 				it "do not create a shift submission request" do
 					post :create, params: params
 					expect(response).to have_http_status(400)
-					expect(response.body).to include(I18n.t('store.stores.fetch_staff_list.not_found_membership'))
+					expect(response.body).to include(I18n.t('store.stores.fetch.not_found_membership'))
 				end
 			end
 		end

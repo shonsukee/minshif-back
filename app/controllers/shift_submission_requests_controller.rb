@@ -1,15 +1,15 @@
-class Shift::ShiftSubmissionRequestsController < ApplicationController
+class ShiftSubmissionRequestsController < ApplicationController
 	def create
 		# ログインユーザの所属情報を取得
 		login_user = User.find_by(email: params[:email])
 		if login_user.nil?
-			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found_user') }, status: :bad_request
+			render json: { error: I18n.t('store.stores.fetch.not_found_user') }, status: :bad_request
 			return
 		end
 
 		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
 		if login_store.nil?
-			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found_membership') }, status: :bad_request
+			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :bad_request
 			return
 		end
 
@@ -39,7 +39,7 @@ class Shift::ShiftSubmissionRequestsController < ApplicationController
 
 		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
 		if login_store.nil?
-			render json: { error: I18n.t('store.stores.fetch_staff_list.not_found') }, status: :not_found
+			render json: { error: I18n.t('store.stores.fetch.not_found') }, status: :not_found
 			return
 		end
 

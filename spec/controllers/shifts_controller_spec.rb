@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Shift::ShiftsController, type: :controller do
-	describe 'GET #fetch_shifts' do
+RSpec.describe ShiftsController, type: :controller do
+	describe 'GET #index' do
 		let(:user) { create(:user) }
 
 		before do
@@ -17,25 +17,28 @@ RSpec.describe Shift::ShiftsController, type: :controller do
 				let!(:shift2) { create(:shift, membership: membership, shift_submission_request: shift_submission_request, shift_date: '2024-08-20') }
 
 				let(:params) {{
+					id: user.id,
 					fetch_shift: {
-						email: user.email,
 						start_date: Date.parse("2024-08-01"),
 						end_date: Date.parse("2024-08-30"),
 					}
 				}}
 
 				it "returns correct staff list" do
-					get :fetch_shifts, params: params
+					get :index, params: params
 					expect(response).to have_http_status(:success)
 
-					staff_list = JSON.parse(response.body)['staff_shift_list'][0]
+					staff_list = JSON.parse(response.body)[0]
 
 					expect(staff_list).to be_an(Array)
 					expect(staff_list.first).to include(
+						'id' => 1,
 						'date' => '2024-08-15',
 						'start_time' => '2000-01-01T09:00:00.000+09:00',
 						'end_time' => '2000-01-01T18:00:00.000+09:00',
-						'email' => user.email,
+						'email' => 'minshif.test@gmail.com',
+						'notes' => 'test notes! wakuwaku.',
+						'shift_submission_request_id' => 1,
 						'is_registered' => false
 					)
 				end
@@ -49,18 +52,18 @@ RSpec.describe Shift::ShiftsController, type: :controller do
 				let!(:shift2) { create(:shift, membership: membership, shift_submission_request: shift_submission_request, shift_date: '2024-08-20') }
 
 				let(:params) {{
+					id: user.id,
 					fetch_shift: {
-						email: user.email,
 						start_date: Date.parse("2024-08-01"),
 						end_date: Date.parse("2024-08-30"),
 					}
 				}}
 
 				it "returns nil staff list" do
-					get :fetch_shifts, params: params
+					get :index, params: params
 					expect(response).to have_http_status(:success)
 
-					staff_list = JSON.parse(response.body)['staff_shift_list'][0]
+					staff_list = JSON.parse(response.body)[0]
 
 					expect(staff_list).to be_an(Array)
 					expect(staff_list.first).to be_nil
@@ -70,39 +73,39 @@ RSpec.describe Shift::ShiftsController, type: :controller do
 
 		context "with invalid attributes" do
 			let(:params) {{
+				id: "",
 				fetch_shift: {
-					email: "",
 					start_date: Date.parse("2024-08-01"),
 					end_date: Date.parse("2024-08-30"),
 				}
 			}}
 
-			it "returns email missing error" do
-				get :fetch_shifts, params: params
+			it "returns id missing error" do
+				get :index, params: params
 
 				expect(JSON.parse(response.body)).to eq({
-					"error" => I18n.t('errors.messages.email_blank')
+					"error" => I18n.t('default.errors.messages.id_blank')
 				})
 				expect(response).to have_http_status(:bad_request)
 			end
 
 			it "returns user not found error" do
-				params[:fetch_shift][:email] = "nonexistent@example.com"
-				get :fetch_shifts, params: params
+				params[:id] = "invalid_id"
+				get :index, params: params
 
 				expect(JSON.parse(response.body)).to eq({
-					"error" => I18n.t('errors.messages.user_not_found')
+					"error" => I18n.t('default.errors.messages.user_not_found')
 				})
 				expect(response).to have_http_status(:not_found)
 			end
 
 			it "returns store not found error" do
 				allow(Membership).to receive(:find_by).and_return(nil)
-				params[:fetch_shift][:email] = user.email
-				get :fetch_shifts, params: params
+				params[:id] = user.id
+				get :index, params: params
 
 				expect(JSON.parse(response.body)).to eq({
-					"error" => I18n.t('errors.messages.store_not_found')
+					"error" => I18n.t('default.errors.messages.store_not_found')
 				})
 				expect(response).to have_http_status(:not_found)
 			end

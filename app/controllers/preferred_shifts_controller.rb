@@ -1,4 +1,4 @@
-class Shift::PreferredShiftsController < ApplicationController
+class PreferredShiftsController < ApplicationController
 	def create
 		begin
 			login_user = User.find_by(email: params[:email])

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Shift::PreferredShiftsController, type: :controller do
+RSpec.describe PreferredShiftsController, type: :controller do
 	describe 'POST #create' do
 		let(:user) { create(:user) }
 		let!(:membership) { create(:membership, user: user, current_store: true) }
