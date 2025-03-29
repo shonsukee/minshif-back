@@ -1,18 +1,6 @@
 class StoresController < ApplicationController
 	def index
-		user = User.find_by_user_id(index_params['id'])
-		if user.nil?
-			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
-			return
-		end
-
-		memberships = Membership.find_by_user(user)
-		if memberships.empty?
-			render json: { error: I18n.t('user.memberships.index.failed') }, status: :not_found
-			return
-		end
-
-		stores = Store.find_by_memberships(memberships)
+		stores = search_store_info(index_params['id'])
 		render json: stores
 	end
 
@@ -51,7 +39,32 @@ class StoresController < ApplicationController
 		end
 	end
 
+	def switch
+		user_id = switch_params[:user_id]
+		store_id = switch_params[:store_id]
+		Membership.switch_store(user_id, store_id)
+		stores = search_store_info(user_id)
+
+		render json: stores
+	end
+
 	private
+
+	def search_store_info(user_id)
+		user = User.find_by_user_id(user_id)
+		if user.nil?
+			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
+			return
+		end
+
+		memberships = Membership.find_by_user(user)
+		if memberships.empty?
+			render json: { error: I18n.t('user.memberships.index.failed') }, status: :not_found
+			return
+		end
+
+		Store.find_by_memberships(memberships)
+	end
 
 	def index_params
 		params.permit(:id)
@@ -59,5 +72,9 @@ class StoresController < ApplicationController
 
 	def create_params
 		params.permit(:store_name, :location, :created_by_user_id)
+	end
+
+	def switch_params
+		params.permit(:user_id, :store_id)
 	end
 end
