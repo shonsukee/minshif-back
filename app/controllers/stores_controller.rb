@@ -31,7 +31,7 @@ class StoresController < ApplicationController
 
 		user = User.find_by(id: create_params[:created_by_user_id])
 		if user.nil?
-			render json: { error: I18n.t('default.errors.messages.user_not_found') }
+			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
 			return
 		end
 
