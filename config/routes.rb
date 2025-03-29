@@ -1,27 +1,33 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
 	get '/', to: 'static_page#index'
 
-	namespace 'user' do
-		post '/create', to: 'users#create'
-		get '/get_user_info', to: 'users#get_user_info'
-		get '/fetch_membership', to: 'users#fetch_membership'
+	get '/users', to: 'users#show'
+	post '/users', to: 'users#create'
+	get '/stores/:store_id/users', to: 'users#index'
+
+	get '/users/memberships', to: 'memberships#index'
+
+	get '/preferred-shifts', to: 'preferred_shifts#index'
+	post '/preferred-shifts', to: 'preferred_shifts#create'
+
+	get '/shift-submission-requests', to: 'shift_submission_requests#wanted'
+	post '/shift-submission-requests', to: 'shift_submission_requests#create'
+
+	get '/users/:id/store-shifts', to: 'shifts#index'
+	post '/shifts', to: 'shifts#create'
+
+	post '/stores', to: 'stores#create'
+
+	post '/invitations', to: 'invitations#create'
+
+	post '/', to: 'line_bots#callback'
+	get '/bots/code', to: 'line_bots#index'
+	post '/bots/code', to: 'line_bots#create'
+
+	Sidekiq::Web.use(Rack::Auth::Basic) do |user_id, password|
+		[user_id, password] == [ENV['SIDEKIQ_BASIC_AUTH_USER'], ENV['SIDEKIQ_BASIC_AUTH_PASSWORD']]
 	end
-
-	namespace 'shift' do
-		post '/preferred_shifts', to: 'preferred_shifts#create'
-
-		post '/submitShiftRequest', to: 'shift_submission_requests#create'
-		get '/fetch_shift_request', to: 'shift_submission_requests#wanted'
-
-		get '/fetch_shifts', to: 'shifts#fetch_shifts'
-
-		post '/register_draft_shifts', to: 'draft_shifts#create'
-	end
-
-	namespace 'store' do
-		post '/create', to: 'store#create'
-		get '/staff_list', to: 'store#fetch_staff_list'
-	end
-
-	post '/invitation', to: 'invitations#create'
+	mount Sidekiq::Web => "/sidekiq"
 end

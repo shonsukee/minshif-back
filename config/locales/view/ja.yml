@@ -9,6 +9,7 @@ ja:
       deadline_date_after_end_date: "締切日時は終了日時より後の日時を選択してください"
       messages:
         email_blank: "メールアドレスを入力してください"
+        id_blank: "IDを入力してください"
         user_not_found: "ユーザが見つかりませんでした"
         store_not_found: "店舗が見つかりませんでした"
   user:
@@ -16,14 +17,17 @@ ja:
       create:
         already_created: "お帰りなさい"
         success: "minshifへ、ようこそ"
-      get_user_info:
+      show:
         failed: "ユーザが見つかりませんでした"
-      fetch_membership:
+      index:
         failed: "所属情報が見つかりませんでした"
         success: "所属情報を取得しました"
+    memberships:
+      index:
+        failed: "所属情報が見つかりませんでした"
   shift:
     shifts:
-      fetch_shifts:
+      index:
         login_required: "ログインしてください"
     shift_submission_requests:
       create:
@@ -39,7 +43,7 @@ ja:
         no_shift_request: "シフト提出依頼がありません"
         no_membership: "所属情報がありません"
         missing_time: "時間が指定されていません"
-    draft_shifts:
+    shifts:
       create:
         success: "シフトを作成しました"
         no_privilege: "権限がありません"
@@ -49,7 +53,7 @@ ja:
         success: "店舗を作成しました"
         already_created: "指定された店舗名は既に作成されています"
         empty: "店舗名が登録されていません"
-      fetch_staff_list:
+      fetch:
         not_found_user: "ユーザが取得できませんでした"
         not_found_membership: "店情報が取得できませんでした"
   invitation:
@@ -76,3 +80,16 @@ ja:
       main: "minshif3420@gmail.com"
       test: "minshif.test@gmail.com"
       invitation: "minshif.invitation@gmail.com"
+  line_bot:
+    create:
+      success: "認証コードを登録しました"
+      failed: "認証コードの登録に失敗しました"
+    callback:
+      help: "シフト通知をするLINE Botの設定方法を紹介します！\n\n1. アプリで整数4桁の認証コードを生成する\n2. 認証コードをコピーする\n3. LINE Botへ認証コードを送信する\n\n認証に成功すると次の午前9時からシフト通知を行います🚀"
+      already_registered: "既に登録されているようです👀\nいつもご利用いただきありがとうございます！"
+      success: "認証に成功しました🚀\nご利用いただきありがとうございます！"
+      failed: "認証に失敗しました😭\nお手数をおかけしますが、アプリで認証コードを再生成してください"
+      invalid_code: "チャットしていただきありがとうございます！\nLINE Botは個別にチャットすることはできません😭\n\n使い方の詳細は「ヘルプ」とお問合せください"
+      not_text: "チャットしていただきありがとうございます！\nLINE Botはテキストのみの対応です😭\nご了承ください"
+    send_shift_message:
+      notify: "%{date} 【%{store_name}】でのシフトが予定されています。\n勤務時間は %{start_time} ~ %{end_time} です。\nお忘れなくご準備ください！"

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe User::UsersController, type: :controller do
+RSpec.describe UsersController, type: :controller do
 	describe "POST #create" do
 		let(:input_params) { {
 			code: '',
@@ -70,14 +70,14 @@ RSpec.describe User::UsersController, type: :controller do
 		end
 	end
 
-	describe 'GET#get_user_info' do
+	describe 'GET#show' do
 		let(:user) { create(:user) }
 
 		it 'when the user information is correct' do
-			get :get_user_info, params: { email: user.email }
+			get :show, params: { email: user.email }
 
 			expect(response).to have_http_status(200)
-			expect(JSON.parse(response.body)['user']).to include({
+			expect(JSON.parse(response.body)).to include({
 				'id' => user.id,
 				'user_name' => user.user_name,
 				'email' => user.email,
@@ -86,11 +86,11 @@ RSpec.describe User::UsersController, type: :controller do
 		end
 
 		it 'returns an error when the user is not found' do
-			get :get_user_info, params: { email: 'nonexistent@example.com' }
+			get :show, params: { email: 'nonexistent@example.com' }
 
-			expect(response).to have_http_status(:bad_request)
+			expect(response).to have_http_status(:not_found)
 			expect(JSON.parse(response.body)).to include({
-				'error' => I18n.t('user.users.get_user_info.failed')
+				'error' => I18n.t('user.users.show.failed')
 			})
 		end
 	end
