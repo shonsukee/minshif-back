@@ -34,6 +34,10 @@ class Membership < ApplicationRecord
 		Membership.where(user_id: user_id, current_store: true).update_all(current_store: false)
 	end
 
+	def self.find_by_user(user)
+		Membership.where(user_id: user.id)
+	end
+
 	private
 
 	def ensure_only_one_current_store

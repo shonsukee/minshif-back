@@ -1,8 +1,25 @@
 class StoresController < ApplicationController
+	def index
+		user = User.find_by_user_id(index_params['id'])
+		if user.nil?
+			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
+			return
+		end
+
+		memberships = Membership.find_by_user(user)
+		if memberships.empty?
+			render json: { error: I18n.t('user.memberships.index.failed') }, status: :not_found
+			return
+		end
+
+		stores = Store.find_by_memberships(memberships)
+		render json: stores
+	end
+
 	def create
 		store = Store.new(
-			store_name: input_store_params[:store_name],
-			location: input_store_params[:location]
+			store_name: create_params[:store_name],
+			location: create_params[:location]
 		)
 		if !store[:store_name] || store[:store_name] == ""
 			render json: { error: I18n.t('store.stores.create.empty') }, status: :unprocessable_entity
@@ -12,7 +29,7 @@ class StoresController < ApplicationController
 			return
 		end
 
-		user = User.find_by(id: input_store_params[:created_by_user_id])
+		user = User.find_by(id: create_params[:created_by_user_id])
 		if user.nil?
 			render json: { error: I18n.t('default.errors.messages.user_not_found') }
 			return
@@ -36,7 +53,11 @@ class StoresController < ApplicationController
 
 	private
 
-	def input_store_params
+	def index_params
+		params.permit(:id)
+	end
+
+	def create_params
 		params.permit(:store_name, :location, :created_by_user_id)
 	end
 end
