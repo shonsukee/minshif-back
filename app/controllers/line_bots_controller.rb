@@ -77,7 +77,7 @@ class LineBotsController < ApplicationController
 
 	def index
 		auth_code = AuthCode.index(input_fetch_params[:user_id])
-		render json: { message: auth_code }
+		render json: auth_code
 	end
 
 	private

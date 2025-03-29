@@ -5,11 +5,7 @@ class AuthCode < ApplicationRecord
 		auth_record = find_or_initialize_by(user_id: user_id)
 		auth_record.auth_code = auth_code
 
-		if auth_record.save
-			true
-		else
-			false
-		end
+		auth_record.save
 	end
 
 	def self.index(user_id)
