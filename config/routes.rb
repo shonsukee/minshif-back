@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
 	get '/stores', to: 'stores#index'
 	post '/stores', to: 'stores#create'
+	post '/stores/switch', to: 'stores#switch'
 
 	post '/invitations', to: 'invitations#create'
 

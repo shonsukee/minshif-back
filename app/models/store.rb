@@ -14,6 +14,7 @@ class Store < ApplicationRecord
 
 		memberships.map do |membership|
 			{
+				id: membership.store_id,
 				store_name: stores[membership.store_id]&.store_name,
 				current_store: membership.current_store
 			}
