@@ -18,7 +18,9 @@ Rails.application.routes.draw do
 	get '/users/:id/store-shifts', to: 'shifts#index'
 	post '/shifts', to: 'shifts#create'
 
+	get '/stores', to: 'stores#index'
 	post '/stores', to: 'stores#create'
+	post '/stores/switch', to: 'stores#switch'
 
 	post '/invitations', to: 'invitations#create'
 

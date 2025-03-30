@@ -34,6 +34,15 @@ class Membership < ApplicationRecord
 		Membership.where(user_id: user_id, current_store: true).update_all(current_store: false)
 	end
 
+	def self.find_by_user(user)
+		Membership.where(user_id: user.id)
+	end
+
+	def self.switch_store(user_id, store_id)
+		reset_current_store(user_id)
+		Membership.find_by(user_id: user_id, store_id: store_id)&.update(current_store: true)
+	end
+
 	private
 
 	def ensure_only_one_current_store
