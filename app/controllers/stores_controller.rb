@@ -47,7 +47,10 @@ class StoresController < ApplicationController
 	def switch
 		user_id = switch_params[:user_id]
 		store_id = switch_params[:store_id]
-		Membership.switch_store(user_id, store_id)
+		if !Membership.switch_store(user_id, store_id)
+			render json: { error: I18n.t('store.stores.switch.failed') }, status: :unprocessable_entity
+			return
+		end
 		stores = search_store_info(user_id)
 		if stores.is_a?(Hash) && stores[:error]
 			render json: stores, status: stores[:status]
