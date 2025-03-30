@@ -62,4 +62,49 @@ RSpec.describe StoresController, type: :controller do
 			end
 		end
 	end
+	describe 'GET #index' do
+		let(:user) { create(:user) }
+		let(:store) { create(:store) }
+
+		before do
+			allow(Jwt::UserAuthenticator).to receive(:call).and_return(user)
+		end
+
+		context 'when user exists and has memberships' do
+			before do
+				create(:membership, user_id: user.id, store_id: store.id)
+			end
+
+			it 'returns the associated stores' do
+				get :index, params: { id: user.id }
+
+				expect(response).to have_http_status(:ok)
+				body = JSON.parse(response.body)
+				expect(body).to be_an(Array)
+				expect(body.first["store_name"]).to eq(store.store_name)
+			end
+		end
+
+		context 'when user does not exist' do
+			it 'returns 404 user not found' do
+				get :index, params: { id: 'nonexistent_id' }
+
+				expect(response).to have_http_status(:not_found)
+				expect(JSON.parse(response.body)).to eq({
+					"error" => I18n.t('default.errors.messages.user_not_found')
+				})
+			end
+		end
+
+		context 'when user has no memberships' do
+			it 'returns 404 memberships not found' do
+				get :index, params: { id: user.id }
+
+				expect(response).to have_http_status(:not_found)
+				expect(JSON.parse(response.body)).to eq({
+					"error" => I18n.t('user.memberships.index.failed')
+				})
+			end
+		end
+	end
 end

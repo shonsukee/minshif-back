@@ -35,4 +35,8 @@ class User < ApplicationRecord
 			false
 		end
 	end
+
+	def self.find_by_user_id(user_id)
+		User.find_by(id: user_id)
+	end
 end
