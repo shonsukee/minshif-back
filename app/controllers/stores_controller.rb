@@ -1,6 +1,11 @@
 class StoresController < ApplicationController
 	def index
 		stores = search_store_info(index_params['id'])
+		if stores.is_a?(Hash) && stores[:error]
+			render json: stores, status: stores[:status]
+			return
+		end
+
 		render json: stores
 	end
 
@@ -44,6 +49,10 @@ class StoresController < ApplicationController
 		store_id = switch_params[:store_id]
 		Membership.switch_store(user_id, store_id)
 		stores = search_store_info(user_id)
+		if stores.is_a?(Hash) && stores[:error]
+			render json: stores, status: stores[:status]
+			return
+		end
 
 		render json: stores
 	end
@@ -53,14 +62,12 @@ class StoresController < ApplicationController
 	def search_store_info(user_id)
 		user = User.find_by_user_id(user_id)
 		if user.nil?
-			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
-			return
+			return { error: I18n.t('default.errors.messages.user_not_found'), status: :not_found }
 		end
 
 		memberships = Membership.find_by_user(user)
 		if memberships.empty?
-			render json: { error: I18n.t('user.memberships.index.failed') }, status: :not_found
-			return
+			return { error: I18n.t('user.memberships.index.failed'), status: :not_found }
 		end
 
 		Store.find_by_memberships(memberships)
