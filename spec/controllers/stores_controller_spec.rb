@@ -91,7 +91,8 @@ RSpec.describe StoresController, type: :controller do
 
 				expect(response).to have_http_status(:not_found)
 				expect(JSON.parse(response.body)).to eq({
-					"error" => I18n.t('default.errors.messages.user_not_found')
+					"error" => I18n.t('default.errors.messages.user_not_found'),
+					"status" => "not_found"
 				})
 			end
 		end
@@ -102,7 +103,8 @@ RSpec.describe StoresController, type: :controller do
 
 				expect(response).to have_http_status(:not_found)
 				expect(JSON.parse(response.body)).to eq({
-					"error" => I18n.t('user.memberships.index.failed')
+					"error" => I18n.t('user.memberships.index.failed'),
+					"status" => "not_found"
 				})
 			end
 		end

@@ -1,18 +1,11 @@
 class StoresController < ApplicationController
 	def index
-		user = User.find_by_user_id(index_params['id'])
-		if user.nil?
-			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
+		stores = search_store_info(index_params['id'])
+		if stores.is_a?(Hash) && stores[:error]
+			render json: stores, status: stores[:status]
 			return
 		end
 
-		memberships = Membership.find_by_user(user)
-		if memberships.empty?
-			render json: { error: I18n.t('user.memberships.index.failed') }, status: :not_found
-			return
-		end
-
-		stores = Store.find_by_memberships(memberships)
 		render json: stores
 	end
 
@@ -51,7 +44,37 @@ class StoresController < ApplicationController
 		end
 	end
 
+	def switch
+		user_id = switch_params[:user_id]
+		store_id = switch_params[:store_id]
+		if !Membership.switch_store(user_id, store_id)
+			render json: { error: I18n.t('store.stores.switch.failed') }, status: :unprocessable_entity
+			return
+		end
+		stores = search_store_info(user_id)
+		if stores.is_a?(Hash) && stores[:error]
+			render json: stores, status: stores[:status]
+			return
+		end
+
+		render json: stores
+	end
+
 	private
+
+	def search_store_info(user_id)
+		user = User.find_by_user_id(user_id)
+		if user.nil?
+			return { error: I18n.t('default.errors.messages.user_not_found'), status: :not_found }
+		end
+
+		memberships = Membership.find_by_user(user)
+		if memberships.empty?
+			return { error: I18n.t('user.memberships.index.failed'), status: :not_found }
+		end
+
+		Store.find_by_memberships(memberships)
+	end
 
 	def index_params
 		params.permit(:id)
@@ -59,5 +82,9 @@ class StoresController < ApplicationController
 
 	def create_params
 		params.permit(:store_name, :location, :created_by_user_id)
+	end
+
+	def switch_params
+		params.permit(:user_id, :store_id)
 	end
 end

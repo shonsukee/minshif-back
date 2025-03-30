@@ -49,6 +49,9 @@ ja:
         no_privilege: "権限がありません"
   store:
     stores:
+      switch:
+        success: "店舗を切り替えました"
+        failed: "店舗の切り替えに失敗しました"
       create:
         success: "店舗を作成しました"
         already_created: "指定された店舗名は既に作成されています"
