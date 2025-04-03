@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe UserMailer, type: :mailer do
 	describe '#invitation' do
-		let(:user) { OpenStruct.new(email: I18n.t('user_mailer.email.test'), user_name: "test_user") }
+		let(:user) { OpenStruct.new(email: I18n.t('mailer.email.test'), user_name: "test_user") }
 		let(:invite_link) { 'https://minshif.com/login?invitation_id=123' }
 		let(:manager) { OpenStruct.new(user_name: "manager") }
 		subject(:mail) do
@@ -11,8 +11,8 @@ RSpec.describe UserMailer, type: :mailer do
 		end
 
 		context 'when send invite email' do
-			it { expect(mail.from.first).to eq(I18n.t('user_mailer.email.main')) }
-			it { expect(mail.subject).to eq(I18n.t('user_mailer.invitation.subject')) }
+			it { expect(mail.from.first).to eq(I18n.t('mailer.email.main')) }
+			it { expect(mail.subject).to eq(I18n.t('mailer.invitation.subject')) }
 		end
 	end
 end
