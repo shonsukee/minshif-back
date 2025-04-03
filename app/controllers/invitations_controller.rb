@@ -1,12 +1,12 @@
 class InvitationsController < ApplicationController
 	def create
-		if params[:invitee][:email].blank?
+		if params[:invitee_email].blank?
 			render json: { error: I18n.t('invitation.invitations.create.blank') }, status: :bad_request
 			return
 		end
 
 		# 管理者情報
-		@manager = User.find_by(id: params[:manager][:user_id])
+		@manager = User.find_by(id: params[:manager_id])
 		membership = Membership.find_by(user_id: @manager.id, current_store: true)
 		if membership.blank? || @manager.blank?
 			render json: { error: I18n.t('invitation.invitations.create.invalid_manager_info') }, status: :bad_request
@@ -14,12 +14,12 @@ class InvitationsController < ApplicationController
 		end
 
 		ActiveRecord::Base.transaction do
-			invitee_email = params[:invitee][:email].downcase
+			invitee_email = params[:invitee_email].downcase
 			@invitee_user = User.find_by(email: invitee_email)
 
 			# 招待しているグループに既に所属している場合
 			if @invitee_user && Membership.find_by(user_id: @invitee_user.id, store_id: membership.store_id)
-				render json: { msg: I18n.t('invitation.invitations.create.already_joined') }
+				render json: { message: I18n.t('invitation.invitations.create.already_joined') }
 			elsif @invitee_user
 				begin
 					# 既存ユーザで，招待している店舗に参加していない場合，スタッフとして店舗に追加
@@ -29,7 +29,7 @@ class InvitationsController < ApplicationController
 						current_store: false,
 						privilege: 1
 					)
-					render json: { msg: I18n.t('invitation.invitations.create.success') }
+					render json: { message: I18n.t('invitation.invitations.create.success') }
 				rescue StandardError => e
 					render json: { error: e.message }
 				end
@@ -50,7 +50,7 @@ class InvitationsController < ApplicationController
 						invitee_email: invitee_email,
 						expired_at: DateTime.now + 1.day
 					)
-					render json: { msg: I18n.t('invitation.invitations.create.success_invited') }
+					render json: { message: I18n.t('invitation.invitations.create.success_invited') }
 				rescue StandardError => e
 					render json: { error: e.message }
 				end
