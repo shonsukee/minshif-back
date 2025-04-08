@@ -42,7 +42,27 @@ class ShiftsController < ApplicationController
 		end
 
 		begin
-			Shift.register_shifts!(input_create_params, user)
+			shifts = input_create_params
+			Shift.register_shifts!(shifts, user)
+
+			# 予定されているシフトを個別に収集
+			scheduled_shifts = Hash.new { |h, k| h[k] = [] }
+			for shift in shifts do
+				target = User.find_by(email: shift[:email])
+				start_time = shift[:start_time].is_a?(String) ? Time.zone.parse(shift[:start_time]) : shift[:start_time]
+				end_time = shift[:end_time].is_a?(String) ? Time.zone.parse(shift[:end_time]) : shift[:end_time]
+				scheduled_shifts[target] << {
+					date: shift[:date],
+					start_time: start_time,
+					end_time: end_time
+				}
+			end
+
+			# 非同期で成功メッセージを送信
+			scheduled_shifts.each do |target, shifts|
+				ShiftMailer.registration(shifts, target, I18n.t('mailer.shift.create')).deliver_later
+			end
+
 			render json: { message: I18n.t('shift.shifts.create.success') }, status: :ok
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }, status: :bad_request

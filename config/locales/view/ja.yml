@@ -76,13 +76,17 @@ ja:
     invalid_headers: "ヘッダーが不正です"
   google:
     failed_api_request: "APIリクエストに失敗しました"
-  user_mailer:
+  mailer:
     invitation:
       subject: "【重要】minshif招待メール"
     email:
       main: "minshif3420@gmail.com"
       test: "minshif.test@gmail.com"
       invitation: "minshif.invitation@gmail.com"
+    shift:
+      create: "シフトが作成されました"
+      update: "シフトが更新されました"
+      delete: "シフトが削除されました"
   line_bot:
     create:
       success: "認証コードを登録しました"

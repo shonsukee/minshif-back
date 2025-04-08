@@ -23,7 +23,7 @@ class ShiftSubmissionRequestsController < ApplicationController
 		)
 
 		if @shift_submission_request.save
-			render json: { msg: I18n.t('shift.shift_submission_requests.create.success') }, status: :ok
+			render json: { message: I18n.t('shift.shift_submission_requests.create.success') }, status: :ok
 		else
 			render json: { error: @shift_submission_request.errors.full_messages }, status: :bad_request
 		end
@@ -33,13 +33,13 @@ class ShiftSubmissionRequestsController < ApplicationController
 		# ログインユーザの所属情報を取得
 		login_user = User.find_by(email: params[:email])
 		if login_user.nil?
-			render json: { error: "ユーザが見つかりません" }, status: :not_found
+			render json: { error: I18n.t('default.errors.messages.user_not_found') }, status: :not_found
 			return
 		end
 
 		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
 		if login_store.nil?
-			render json: { error: I18n.t('store.stores.fetch.not_found') }, status: :not_found
+			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :not_found
 			return
 		end
 
