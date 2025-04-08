@@ -1,4 +1,5 @@
 ApplicationRecord.transaction do
+	AuthCode.delete_all
 	ShiftSubmissionRequest.delete_all
 	Shift.delete_all
 	Membership.delete_all
