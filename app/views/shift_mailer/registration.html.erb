@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+	</head>
+	<body>
+		<p><%= @target.user_name %> 様</p>
+		<p>以下の内容でシフトが登録されました：</p>
+		<ul>
+		<% @shifts.each do |shift| %>
+			<li>日付：<%= shift[:date] %></li>
+			<li>開始時刻：<%= shift[:start_time].strftime("%H:%M") %></li>
+			<li>終了時刻：<%= shift[:end_time].strftime("%H:%M") %></li>
+			<br />
+		<% end %>
+		</ul>
+
+		<p>
+		操作に不明な点があればお気軽にお問い合わせください。<br />
+		今後とも minshif をよろしくお願いいたします。
+		</p>
+
+		<p>
+		-----------------------------------------------<br />
+		minshif運営チーム<br />
+		email: <%= I18n.t('mailer.email.main') %><br />
+		-----------------------------------------------
+		</p>
+	</body>
+</html>
