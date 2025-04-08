@@ -39,7 +39,7 @@ class ShiftSubmissionRequestsController < ApplicationController
 
 		login_store = Membership.find_by(user_id: login_user.id, current_store: true)
 		if login_store.nil?
-			render json: { error: I18n.t('store.stores.fetch.not_found') }, status: :not_found
+			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :not_found
 			return
 		end
 

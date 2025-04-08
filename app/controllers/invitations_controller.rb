@@ -36,7 +36,7 @@ class InvitationsController < ApplicationController
 			else
 				# マジックリンク生成
 				secure_id = SecureRandom.urlsafe_base64
-				@invite_link = "#{ENV['FRONTEND_ORIGIN']}/login?invitation_id=#{secure_id}"
+				@invite_link = "#{ENV['FRONTEND_ORIGIN']}/signin?invitation_id=#{secure_id}"
 				@invitee_user = User.new(
 					user_name: "guest",
 					email: invitee_email
