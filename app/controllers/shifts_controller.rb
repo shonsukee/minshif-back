@@ -30,13 +30,14 @@ class ShiftsController < ApplicationController
 			return
 		end
 
-		store = Membership.find_by(user_id: user.id, current_store: true)
-		if store.nil?
-			render json: { error: I18n.t('store.stores.fetch.not_found') }, status: :not_found
+		membership = Membership.find_by(user_id: user.id, current_store: true)
+		store = Store.find_by(id: membership.store_id)
+		if membership.nil? || store.nil?
+			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :not_found
 			return
 		end
 
-		if store.privilege == "staff"
+		if membership.privilege == "staff"
 			render json: { error: I18n.t('shift.shifts.create.no_privilege') }, status: :bad_request
 			return
 		end
@@ -47,7 +48,7 @@ class ShiftsController < ApplicationController
 
 			# 予定されているシフトを個別に収集
 			scheduled_shifts = Hash.new { |h, k| h[k] = [] }
-			for shift in shifts do
+			shifts.each do |shift|
 				target = User.find_by(email: shift[:email])
 				start_time = shift[:start_time].is_a?(String) ? Time.zone.parse(shift[:start_time]) : shift[:start_time]
 				end_time = shift[:end_time].is_a?(String) ? Time.zone.parse(shift[:end_time]) : shift[:end_time]
@@ -60,7 +61,28 @@ class ShiftsController < ApplicationController
 
 			# 非同期で成功メッセージを送信
 			scheduled_shifts.each do |target, shifts|
-				ShiftMailer.registration(shifts, target, I18n.t('mailer.shift.create')).deliver_later
+				# LINE Botから通知
+				if target.line_user_id.present?
+					text_lines = []
+					text_lines << I18n.t('line_bot.send_shift_message.register.header', store[:store_name])
+					shifts.each do |shift|
+						text_lines << I18n.t('line_bot.send_shift_message.register.shift_time',
+							date:  shift[:date],
+							start_time: shift[:start_time],
+							end_time: shift[:end_time]
+						)
+					end
+					text_lines << I18n.t('line_bot.send_shift_message.register.footer')
+					message = {
+						type: 'text',
+						text: text_lines.join("\n")
+					}
+					client.push_message(target.line_user_id, message)
+
+				# メールで通知
+				else
+					ShiftMailer.registration(shifts, target, I18n.t('mailer.shift.create')).deliver_later
+				end
 			end
 
 			render json: { message: I18n.t('shift.shifts.create.success') }, status: :ok
