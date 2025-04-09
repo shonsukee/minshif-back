@@ -31,14 +31,17 @@ class ShiftsController < ApplicationController
 		end
 
 		membership = Membership.find_by(user_id: user.id, current_store: true)
-		store = Store.find_by(id: membership.store_id)
-		if membership.nil? || store.nil?
+		if membership.nil?
 			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :not_found
+			return
+		elsif membership.privilege == "staff"
+			render json: { error: I18n.t('shift.shifts.create.no_privilege') }, status: :bad_request
 			return
 		end
 
-		if membership.privilege == "staff"
-			render json: { error: I18n.t('shift.shifts.create.no_privilege') }, status: :bad_request
+		store = Store.find_by(id: membership.store_id)
+		if store.nil?
+			render json: { error: I18n.t('store.stores.fetch.not_found_membership') }, status: :not_found
 			return
 		end
 
@@ -64,7 +67,7 @@ class ShiftsController < ApplicationController
 				# LINE Botから通知
 				if target.line_user_id.present?
 					text_lines = []
-					text_lines << I18n.t('line_bot.send_shift_message.register.header', store[:store_name])
+					text_lines << I18n.t('line_bot.send_shift_message.register.header', store_name: store[:store_name])
 					shifts.each do |shift|
 						text_lines << I18n.t('line_bot.send_shift_message.register.shift_time',
 							date:  shift[:date],
