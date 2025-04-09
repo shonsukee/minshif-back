@@ -83,9 +83,11 @@ end
 
 group :production do
   gem "pg", "~> 1.4"
-  gem "sentry-ruby"
-  gem "sentry-rails"
 end
+
+# Sentry
+gem "sentry-ruby"
+gem "sentry-rails"
 
 # HTTP通信
 gem "httparty"

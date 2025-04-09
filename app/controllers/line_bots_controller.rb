@@ -47,7 +47,9 @@ class LineBotsController < ApplicationController
 						# 未登録の場合
 						elsif code.match?(/\A\d+\z/) && code.to_i.abs.to_s.size == 4
 							# 有効期限は30分
-							auth_code_record = AuthCode.find_by(auth_code: code, created_at: Date.today - 30 * 60)
+							auth_code_record = AuthCode.where(auth_code: code)
+														.where('created_at > ?', 30.minutes.ago)
+														.first
 
 							if auth_code_record&.auth_code_matches?(code) && User.register_line_id(auth_code_record.user_id, line_user_id)
 								message[:text] = I18n.t('line_bot.callback.success')
