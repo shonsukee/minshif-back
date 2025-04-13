@@ -73,7 +73,7 @@ class LineBotsController < ApplicationController
 		if AuthCode.create(input_register_params[:auth_code], input_register_params[:user_id])
 			render json: { message: I18n.t('line_bot.create.success') }, status: :ok
 		else
-			render json: { message: I18n.t('line_bot.create.failed') }, status: :not_found
+			render json: { error: I18n.t('line_bot.create.failed') }, status: :bad_request
 		end
 	end
 
