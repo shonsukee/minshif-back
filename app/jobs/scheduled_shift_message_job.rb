@@ -10,12 +10,14 @@ class ScheduledShiftMessageJob < ApplicationJob
 			.joins('INNER JOIN stores ON memberships.store_id = stores.id')
 			.where.not(line_user_id: nil)
 			.where(shifts: { shift_date: Date.tomorrow })
-			.distinct
+			.order('shifts.start_time ASC')
 			.pluck('users.line_user_id', 'shifts.start_time', 'shifts.end_time', 'stores.store_name')
 
-		jst_time = 9 * 60 * 60
+		jst_offset = 9.hours
 		tomorrow_shift_users.each do |line_user_id, start_time, end_time, store_name|
-			LineBotsController.new.send_shift_message(line_user_id, store_name, start_time + jst_time, end_time + jst_time)
+			jst_start = start_time + jst_offset
+			jst_end = end_time + jst_offset
+			UserShiftNotificationJob.perform_later(line_user_id, store_name, jst_start, jst_end)
 		end
 	end
 end
