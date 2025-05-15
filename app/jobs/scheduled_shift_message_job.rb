@@ -1,23 +1,41 @@
-require "time"
-
 class ScheduledShiftMessageJob < ApplicationJob
 	queue_as :default
 
 	def perform
 		# 明日シフトに入っている人を抽出
-		tomorrow_shift_users = User.joins(:memberships)
-			.joins('INNER JOIN shifts ON memberships.id = shifts.membership_id')
-			.joins('INNER JOIN stores ON memberships.store_id = stores.id')
-			.where.not(line_user_id: nil)
-			.where(shifts: { shift_date: Date.tomorrow })
-			.order('shifts.start_time ASC')
+		tomorrow = Date.tomorrow
+		tomorrow_shifts = Shift
+			.joins(membership: [:user, :store])
+			.where(shift_date: tomorrow)
+			.where.not(users: { line_user_id: nil })
+			.order(start_time: :asc)
 			.pluck('users.line_user_id', 'shifts.start_time', 'shifts.end_time', 'stores.store_name')
 
-		jst_offset = 9.hours
-		tomorrow_shift_users.each do |line_user_id, start_time, end_time, store_name|
-			jst_start = start_time + jst_offset
-			jst_end = end_time + jst_offset
-			UserShiftNotificationJob.perform_later(line_user_id, store_name, jst_start, jst_end)
+		grouped = tomorrow_shifts.group_by { |record| record[0] }
+
+		grouped.each do |line_user_id, user_shifts|
+			text_lines = []
+			text_lines << I18n.t('line_bot.send_shift_message.notify.header', date: tomorrow)
+
+			last_store_name = nil
+
+			user_shifts.map do |_, start_time, end_time, store_name|
+				if store_name != last_store_name
+					text_lines << I18n.t('line_bot.send_shift_message.notify.store_name', store_name: store_name)
+					last_store_name = store_name
+				end
+
+				start_jst = start_time.in_time_zone("Tokyo").strftime("%H:%M")
+				end_jst   = end_time.in_time_zone("Tokyo").strftime("%H:%M")
+
+				text_lines << I18n.t('line_bot.send_shift_message.notify.shift_time',
+					start_time: start_jst,
+					end_time: end_jst
+				)
+			end
+			text_lines << I18n.t('line_bot.send_shift_message.notify.footer')
+
+			UserShiftNotificationJob.perform_later(line_user_id, text_lines)
 		end
 	end
 end

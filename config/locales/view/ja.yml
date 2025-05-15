@@ -99,7 +99,11 @@ ja:
       invalid_code: "チャットしていただきありがとうございます！\nLINE Botは個別にチャットすることはできません😭\n\n使い方の詳細は「ヘルプ」とお問合せください"
       not_text: "チャットしていただきありがとうございます！\nLINE Botはテキストのみの対応です😭\nご了承ください"
     send_shift_message:
-      notify: "%{date} 【%{store_name}】でのシフトが予定されています。\n勤務時間は %{start_time} ~ %{end_time} です。\nお忘れなくご準備ください！"
+      notify:
+        header: "明日 %{date} に以下のシフトが予定されています。"
+        store_name: "【%{store_name}】"
+        shift_time: "・%{start_time} ~ %{end_time}"
+        footer: "お忘れなくご準備ください！"
       register:
         header: "【%{store_name}】で以下のシフトが登録されました。\n"
         shift_time: "・%{date} %{start_time} ~ %{end_time}"

@@ -1,16 +1,10 @@
 require 'line/bot'
 
 class LineBotsController < ApplicationController
-	def send_shift_message(line_user_id, store_name, start_time, end_time)
-		tomorrow = Date.tomorrow.strftime('%m/%d')
+	def send_shift_message(line_user_id, text_lines)
 		message = {
 			type: 'text',
-			text: I18n.t('line_bot.send_shift_message.notify',
-				date: tomorrow,
-				store_name: store_name,
-				start_time: start_time.strftime('%H:%M'),
-				end_time: end_time.strftime('%H:%M')
-			)
+			text: text_lines
 		}
 		client.push_message(line_user_id, message)
 	end
