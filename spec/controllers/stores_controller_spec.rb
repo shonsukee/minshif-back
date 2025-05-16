@@ -21,7 +21,7 @@ RSpec.describe StoresController, type: :controller do
 				}.to change(Store, :count).by(1)
 
 				expect(JSON.parse(response.body)).to eq({
-					"response"	=> I18n.t('store.stores.create.success')
+					"message"	=> I18n.t('store.stores.create.success')
 				})
 				expect(response).to have_http_status(200)
 			end

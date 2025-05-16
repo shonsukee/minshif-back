@@ -31,7 +31,7 @@ class InvitationsController < ApplicationController
 					)
 					render json: { message: I18n.t('invitation.invitations.create.success') }
 				rescue StandardError => e
-					render json: { error: e.message }
+					render json: { error: e.message }, status: :unprocessable_entity
 				end
 			else
 				# マジックリンク生成
@@ -52,7 +52,7 @@ class InvitationsController < ApplicationController
 					)
 					render json: { message: I18n.t('invitation.invitations.create.success_invited') }
 				rescue StandardError => e
-					render json: { error: e.message }
+					render json: { error: e.message }, status: :unprocessable_entity
 				end
 			end
 		rescue StandardError => e

@@ -18,17 +18,22 @@ RSpec.describe LineBotsController, type: :controller do
 
 		it 'sends a shift reminder message to the specified user' do
 			tomorrow = Date.tomorrow.strftime('%m/%d')
+			text_lines = []
+			text_lines << I18n.t('line_bot.send_shift_message.notify.header', date: tomorrow)
+			text_lines << I18n.t('line_bot.send_shift_message.notify.store_name', store_name: store_name)
+			text_lines << I18n.t('line_bot.send_shift_message.notify.shift_time',
+				start_time: start_time,
+				end_time: end_time
+			)
+			text_lines << I18n.t('line_bot.send_shift_message.notify.footer')
+
 			expected_message = {
 				type: 'text',
-				text: I18n.t('line_bot.send_shift_message.notify',
-							date: tomorrow,
-							store_name: store_name,
-							start_time: start_time.strftime('%H:%M'),
-							end_time: end_time.strftime('%H:%M'))
+				text: text_lines
 			}
 
 			expect(client).to receive(:push_message).with(user_id, expected_message)
-			controller.send_shift_message(user_id, store_name, start_time, end_time)
+			controller.send_shift_message(user_id, text_lines)
 		end
 	end
 end

@@ -124,8 +124,7 @@ class ShiftsController < ApplicationController
 	end
 
 	def input_index_params
-		params.require(:fetch_shift).permit(:start_date, :end_date)
-		params.permit(:id)
+		params.require(:fetch_shift).permit(:start_date, :end_date).merge(params.permit(:id))
 	end
 
 

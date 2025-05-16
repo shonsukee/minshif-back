@@ -54,7 +54,7 @@ ja:
         failed: "店舗の切り替えに失敗しました"
       create:
         success: "店舗を作成しました"
-        already_created: "指定された店舗名は既に作成されています"
+        already_created: "その店舗名は既に使用されています"
         empty: "店舗名が登録されていません"
       fetch:
         not_found_user: "ユーザが取得できませんでした"
@@ -99,7 +99,11 @@ ja:
       invalid_code: "チャットしていただきありがとうございます！\nLINE Botは個別にチャットすることはできません😭\n\n使い方の詳細は「ヘルプ」とお問合せください"
       not_text: "チャットしていただきありがとうございます！\nLINE Botはテキストのみの対応です😭\nご了承ください"
     send_shift_message:
-      notify: "%{date} 【%{store_name}】でのシフトが予定されています。\n勤務時間は %{start_time} ~ %{end_time} です。\nお忘れなくご準備ください！"
+      notify:
+        header: "明日 %{date} に以下のシフトが予定されています。"
+        store_name: "【%{store_name}】"
+        shift_time: "・%{start_time} ~ %{end_time}"
+        footer: "お忘れなくご準備ください！"
       register:
         header: "【%{store_name}】で以下のシフトが登録されました。\n"
         shift_time: "・%{date} %{start_time} ~ %{end_time}"

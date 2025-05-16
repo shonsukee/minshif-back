@@ -1,16 +1,10 @@
 require 'line/bot'
 
 class LineBotsController < ApplicationController
-	def send_shift_message(line_user_id, store_name, start_time, end_time)
-		tomorrow = Date.tomorrow.strftime('%m/%d')
+	def send_shift_message(line_user_id, text_lines)
 		message = {
 			type: 'text',
-			text: I18n.t('line_bot.send_shift_message.notify',
-				date: tomorrow,
-				store_name: store_name,
-				start_time: start_time.strftime('%H:%M'),
-				end_time: end_time.strftime('%H:%M')
-			)
+			text: text_lines
 		}
 		client.push_message(line_user_id, message)
 	end
@@ -73,7 +67,7 @@ class LineBotsController < ApplicationController
 		if AuthCode.create(input_register_params[:auth_code], input_register_params[:user_id])
 			render json: { message: I18n.t('line_bot.create.success') }, status: :ok
 		else
-			render json: { message: I18n.t('line_bot.create.failed') }, status: :not_found
+			render json: { error: I18n.t('line_bot.create.failed') }, status: :bad_request
 		end
 	end
 

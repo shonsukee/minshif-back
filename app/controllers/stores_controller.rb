@@ -38,7 +38,7 @@ class StoresController < ApplicationController
 				current_store: true,
 				privilege: :manager
 			)
-			render json: { response: I18n.t('store.stores.create.success') }
+			render json: { message: I18n.t('store.stores.create.success') }
 		rescue ActiveRecord::RecordInvalid => e
 			render json: { error: e.message }
 		end
@@ -53,11 +53,11 @@ class StoresController < ApplicationController
 		end
 		stores = search_store_info(user_id)
 		if stores.is_a?(Hash) && stores[:error]
-			render json: stores, status: stores[:status]
+			render json: { error: stores }, status: stores[:status]
 			return
 		end
 
-		render json: stores
+		render json: { data: stores }
 	end
 
 	private
