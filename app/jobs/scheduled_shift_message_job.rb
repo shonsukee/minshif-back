@@ -11,7 +11,7 @@ class ScheduledShiftMessageJob < ApplicationJob
 			.order(start_time: :asc)
 			.pluck('users.line_user_id', 'shifts.start_time', 'shifts.end_time', 'stores.store_name')
 
-		grouped = tomorrow_shifts.group_by { |record| record[0] }
+		grouped = tomorrow_shifts.group_by { |line_user_id, _, _, _| line_user_id }
 
 		grouped.each do |line_user_id, user_shifts|
 			text_lines = []
@@ -19,7 +19,7 @@ class ScheduledShiftMessageJob < ApplicationJob
 
 			last_store_name = nil
 
-			user_shifts.map do |_, start_time, end_time, store_name|
+			user_shifts.each do |_, start_time, end_time, store_name|
 				if store_name != last_store_name
 					text_lines << I18n.t('line_bot.send_shift_message.notify.store_name', store_name: store_name)
 					last_store_name = store_name
